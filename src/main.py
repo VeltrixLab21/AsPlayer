@@ -29,16 +29,50 @@ TRANSLATIONS = {
         "stop": "Stop\tCtrl+S",
         "rew_5s": "Rewind 5 Seconds\tLeft",
         "fwd_5s": "Fast Forward 5 Seconds\tRight",
-        "jump_to": "&Jump To",
-        "volume": "&Volume",
         "next_item": "Play Next Item\tPage Down",
         "prev_item": "Play Previous Item\tPage Up",
+        "jump_to": "&Jump To",
+        "jump_rew_30s": "Jump Backward 30 Seconds\tCtrl+Left",
+        "jump_fwd_30s": "Jump Forward 30 Seconds\tCtrl+Right",
+        "jump_rew_1m": "Jump Backward 1 Minute\tShift+Left",
+        "jump_fwd_1m": "Jump Forward 1 Minute\tShift+Right",
+        "jump_rew_5m": "Jump Backward 5 Minutes\tCtrl+PgUp",
+        "jump_fwd_5m": "Jump Forward 5 Minutes\tCtrl+PgDn",
+        "volume": "&Volume",
+        "vol_up": "Volume Up\tUp",
+        "vol_down": "Volume Down\tDown",
+        "vol_mute": "Mute / Unmute\tM",
         "resume_pos": "Resume from Last Position",
         "menu_tools": "&Tools",
         "sub_menu": "Subtitle Menu",
+        "sub_toggle": "Show / Hide Subtitle",
+        "sub_appearance": "Subtitle Appearance Settings...",
+        "sub_sync_menu": "Subtitle Sync Menu",
+        "sub_inc_05": "Increase subtitle 0.5 second\t>",
+        "sub_dec_05": "Decrease subtitle 0.5 second\t<",
+        "sub_inc_5": "Increase subtitle 5 second\tCtrl+>",
+        "sub_dec_5": "Decrease subtitle 5 second\tCtrl+<",
+        "sub_inc_50": "Increase subtitle 50 second\tShift+>",
+        "sub_dec_50": "Decrease subtitle 50 second\tShift+<",
+        "sub_apply_current": "Apply to current line only",
+        "sub_reset": "Reset Subtitle Sync to Default",
+        "sub_pos_bottom": "Position: Bottom",
+        "sub_pos_top": "Position: Top",
+        "sub_app_title": "Subtitle Appearance - ASPlayer",
+        "sub_size_lbl": "Font Size:",
+        "sub_color_lbl": "Text Color:",
+        "sub_bg_lbl": "Background Color:",
         "acc_menu": "Accessibility",
         "tts_settings": "Speech & TTS Settings...",
-        "hardsub_ocr": "Read Hardsub (OCR Mode)",
+        "acc_dialog_title": "Accessibility & TTS Settings - ASPlayer",
+        "tts_engine_label": "Subtitle Speech Output Engine:",
+        "tts_screen_reader": "System Screen Reader (NVDA / JAWS - Default)",
+        "tts_sapi5": "Built-in Windows TTS (SAPI5)",
+        "tts_voice_label": "TTS Voice:",
+        "tts_rate_label": "Speech Rate (Speed):",
+        "tts_vol_label": "Speech Volume (%):",
+        "tts_test_btn": "&Test Voice",
+        "tts_test_phrase": "This is a test of the ASPlayer subtitle voice settings.",
         "preferences": "Preferences...\tCtrl+Shift+P",
         "about_menu": "About ASPlayer...",
         "paused": "Paused",
@@ -48,13 +82,31 @@ TRANSLATIONS = {
         "media_info_title": "Media Information - ASPlayer",
         "about_title": "About ASPlayer",
         "prefs_title": "Preferences - ASPlayer",
-        "prefs_saved": "Preferences saved. Some menu labels will fully update on next restart.",
+        "prefs_saved": "Preferences saved. Some changes will fully apply on next restart.",
         "startup_behavior": "Startup Playback Behavior:",
         "play_beginning": "Always play from beginning",
         "resume_watched": "Resume from last watched position",
         "app_language": "Application Language:",
+        "app_theme": "Application Theme:",
+        "theme_dark": "Cinema Dark (Default)",
+        "theme_midnight": "Midnight Blue",
+        "theme_oled": "OLED Pitch Black",
         "save": "Save",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "close": "Close",
+        "playlist_title": "Playlist Manager - ASPlayer",
+        "playlist_lbl": "Playlist Items (Press Enter to play selected item):",
+        "playlist_add": "&Add Files...",
+        "playlist_remove": "&Remove Selected",
+        "playlist_clear": "&Clear All",
+        "playlist_play": "&Play Selected",
+        "about_content": (
+            "ASPlayer v1.0\n"
+            "Professional Accessible Windows Media Player\n\n"
+            "Designed and optimized for screen reader users (NVDA & JAWS),\n"
+            "featuring built-in SAPI5 TTS, subtitle sync,\n"
+            "and native Windows installer support."
+        )
     },
     "id": {
         "menu_file": "&Berkas",
@@ -74,16 +126,50 @@ TRANSLATIONS = {
         "stop": "Berhenti\tCtrl+S",
         "rew_5s": "Mundur 5 Detik\tLeft",
         "fwd_5s": "Maju 5 Detik\tRight",
-        "jump_to": "&Lompat Ke",
-        "volume": "&Volume",
         "next_item": "Item Berikutnya\tPage Down",
         "prev_item": "Item Sebelumnya\tPage Up",
+        "jump_to": "&Lompat Ke",
+        "jump_rew_30s": "Mundur 30 Detik\tCtrl+Left",
+        "jump_fwd_30s": "Maju 30 Detik\tCtrl+Right",
+        "jump_rew_1m": "Mundur 1 Menit\tShift+Left",
+        "jump_fwd_1m": "Maju 1 Menit\tShift+Right",
+        "jump_rew_5m": "Mundur 5 Menit\tCtrl+PgUp",
+        "jump_fwd_5m": "Maju 5 Menit\tCtrl+PgDn",
+        "volume": "&Volume",
+        "vol_up": "Naikkan Volume\tUp",
+        "vol_down": "Turunkan Volume\tDown",
+        "vol_mute": "Bisukan / Bunyikan\tM",
         "resume_pos": "Lanjutkan dari Posisi Terakhir",
         "menu_tools": "&Alat",
         "sub_menu": "Menu Subtitle",
+        "sub_toggle": "Tampilkan / Sembunyikan Subtitle",
+        "sub_appearance": "Pengaturan Tampilan Subtitle...",
+        "sub_sync_menu": "Sinkronisasi Subtitle",
+        "sub_inc_05": "Majukan subtitle 0,5 detik\t>",
+        "sub_dec_05": "Mundurkan subtitle 0,5 detik\t<",
+        "sub_inc_5": "Majukan subtitle 5 detik\tCtrl+>",
+        "sub_dec_5": "Mundurkan subtitle 5 detik\tCtrl+<",
+        "sub_inc_50": "Majukan subtitle 50 detik\tShift+>",
+        "sub_dec_50": "Mundurkan subtitle 50 detik\tShift+<",
+        "sub_apply_current": "Terapkan hanya pada baris saat ini",
+        "sub_reset": "Atur Ulang Sinkronisasi Subtitle",
+        "sub_pos_bottom": "Posisi: Bawah",
+        "sub_pos_top": "Posisi: Atas",
+        "sub_app_title": "Tampilan Subtitle - ASPlayer",
+        "sub_size_lbl": "Ukuran Huruf:",
+        "sub_color_lbl": "Warna Teks:",
+        "sub_bg_lbl": "Warna Latar Belakang:",
         "acc_menu": "Aksesibilitas",
         "tts_settings": "Pengaturan Suara & TTS...",
-        "hardsub_ocr": "Baca Hardsub (Mode OCR)",
+        "acc_dialog_title": "Pengaturan Aksesibilitas & TTS - ASPlayer",
+        "tts_engine_label": "Mesin Keluaran Suara Subtitle:",
+        "tts_screen_reader": "Pembaca Layar Sistem (NVDA / JAWS - Standar)",
+        "tts_sapi5": "TTS Windows Bawaan (SAPI5)",
+        "tts_voice_label": "Pilihan Suara TTS:",
+        "tts_rate_label": "Kecepatan Bicara:",
+        "tts_vol_label": "Volume Suara (%):",
+        "tts_test_btn": "&Uji Suara",
+        "tts_test_phrase": "Ini adalah pengujian pengaturan suara subtitle ASPlayer.",
         "preferences": "Preferensi...\tCtrl+Shift+P",
         "about_menu": "Tentang ASPlayer...",
         "paused": "Dijeda",
@@ -93,19 +179,107 @@ TRANSLATIONS = {
         "media_info_title": "Informasi Media - ASPlayer",
         "about_title": "Tentang ASPlayer",
         "prefs_title": "Preferensi - ASPlayer",
-        "prefs_saved": "Preferensi disimpan. Restart aplikasi untuk memperbarui seluruh label menu.",
+        "prefs_saved": "Preferensi disimpan. Beberapa perubahan akan diterapkan sepenuhnya setelah restart.",
         "startup_behavior": "Perilaku Pemutaran Saat Awal:",
         "play_beginning": "Selalu putar dari awal",
         "resume_watched": "Lanjutkan dari posisi terakhir ditonton",
         "app_language": "Bahasa Aplikasi:",
+        "app_theme": "Tema Aplikasi:",
+        "theme_dark": "Cinema Dark (Standar)",
+        "theme_midnight": "Midnight Blue",
+        "theme_oled": "OLED Pitch Black",
         "save": "Simpan",
-        "cancel": "Batal"
+        "cancel": "Batal",
+        "close": "Tutup",
+        "playlist_title": "Pengelola Daftar Putar - ASPlayer",
+        "playlist_lbl": "Item Daftar Putar (Tekan Enter untuk memutar item yang dipilih):",
+        "playlist_add": "&Tambah Berkas...",
+        "playlist_remove": "&Hapus Terpilih",
+        "playlist_clear": "&Bersihkan Semua",
+        "playlist_play": "&Putar Terpilih",
+        "about_content": (
+            "ASPlayer v1.0\n"
+            "Pemutar Media Windows Profesional yang Aksesibel\n\n"
+            "Dirancang dan dioptimalkan untuk pengguna pembaca layar (NVDA & JAWS),\n"
+            "dilengkapi TTS SAPI5 bawaan, sinkronisasi subtitle,\n"
+            "serta dukungan pemasang asli Windows."
+        )
     }
 }
 
 
+class SubtitleAppearanceDialog(wx.Dialog):
+    def __init__(self, parent, sub_style, current_lang="en"):
+        tr = TRANSLATIONS[current_lang]
+        super().__init__(parent, title=tr["sub_app_title"], size=(400, 300))
+        self.sub_style = dict(sub_style)
+        
+        panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        
+        # Font Size
+        lbl_size = wx.StaticText(panel, label=tr["sub_size_lbl"])
+        sizer.Add(lbl_size, 0, wx.ALL, 8)
+        self.size_choices = ["Small", "Normal", "Large", "Extra Large"]
+        self.size_choice = wx.Choice(panel, choices=self.size_choices)
+        
+        current_size = self.sub_style.get("font_size", "Normal")
+        if current_size in self.size_choices:
+            self.size_choice.SetStringSelection(current_size)
+        else:
+            self.size_choice.SetSelection(1)
+        sizer.Add(self.size_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
+        
+        # Text Color
+        lbl_color = wx.StaticText(panel, label=tr["sub_color_lbl"])
+        sizer.Add(lbl_color, 0, wx.ALL, 8)
+        self.color_choices = ["White", "Yellow", "Green", "Cyan", "Red"]
+        self.color_choice = wx.Choice(panel, choices=self.color_choices)
+        
+        current_color = self.sub_style.get("text_color", "White")
+        if current_color in self.color_choices:
+            self.color_choice.SetStringSelection(current_color)
+        else:
+            self.color_choice.SetSelection(0)
+        sizer.Add(self.color_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
+        
+        # Background Color
+        lbl_bg = wx.StaticText(panel, label=tr["sub_bg_lbl"])
+        sizer.Add(lbl_bg, 0, wx.ALL, 8)
+        self.bg_choices = ["Transparent", "Black Translucent", "Solid Black"]
+        self.bg_choice = wx.Choice(panel, choices=self.bg_choices)
+        
+        current_bg = self.sub_style.get("bg_color", "Black Translucent")
+        if current_bg in self.bg_choices:
+            self.bg_choice.SetStringSelection(current_bg)
+        else:
+            self.bg_choice.SetSelection(1)
+        sizer.Add(self.bg_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 15)
+        
+        # Buttons
+        btn_sizer = wx.StdDialogButtonSizer()
+        btn_ok = wx.Button(panel, wx.ID_OK, tr["save"])
+        btn_cancel = wx.Button(panel, wx.ID_CANCEL, tr["cancel"])
+        btn_sizer.AddButton(btn_ok)
+        btn_sizer.AddButton(btn_cancel)
+        btn_sizer.Realize()
+        
+        sizer.Add(btn_sizer, 0, wx.ALL | wx.ALIGN_RIGHT, 10)
+        panel.SetSizer(sizer)
+        self.CenterOnParent()
+
+    def get_style(self):
+        return {
+            "font_size": self.size_choices[self.size_choice.GetSelection()],
+            "text_color": self.color_choices[self.color_choice.GetSelection()],
+            "bg_color": self.bg_choices[self.bg_choice.GetSelection()]
+        }
+
+
 class MediaInfoDialog(wx.Dialog):
-    def __init__(self, parent, info_text, title="Media Information - ASPlayer"):
+    def __init__(self, parent, info_text, current_lang="en"):
+        title = TRANSLATIONS[current_lang]["media_info_title"]
+        close_lbl = TRANSLATIONS[current_lang]["close"]
         super().__init__(parent, title=title, size=(480, 350))
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -117,7 +291,7 @@ class MediaInfoDialog(wx.Dialog):
         )
         sizer.Add(self.txt_info, 1, wx.EXPAND | wx.ALL, 12)
 
-        btn_close = wx.Button(panel, wx.ID_CLOSE, "Close")
+        btn_close = wx.Button(panel, wx.ID_CLOSE, close_lbl)
         btn_close.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_CLOSE))
         sizer.Add(btn_close, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 12)
 
@@ -127,19 +301,13 @@ class MediaInfoDialog(wx.Dialog):
 
 
 class AboutDialog(wx.Dialog):
-    def __init__(self, parent, title="About ASPlayer"):
-        super().__init__(parent, title=title, size=(450, 320))
+    def __init__(self, parent, current_lang="en"):
+        title_str = TRANSLATIONS[current_lang]["about_title"]
+        about_text = TRANSLATIONS[current_lang]["about_content"]
+        
+        super().__init__(parent, title=title_str, size=(450, 280))
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
-
-        about_text = (
-            "ASPlayer v1.0\n"
-            "Professional Accessible Windows Media Player\n\n"
-            "Designed and optimized for screen reader users (NVDA & JAWS),\n"
-            "featuring built-in SAPI5 TTS, subtitle sync,\n"
-            "and native Windows installer support.\n\n"
-            "Powered by Python, wxPython, and libVLC."
-        )
 
         self.txt_about = wx.TextCtrl(
             panel,
@@ -159,8 +327,10 @@ class AboutDialog(wx.Dialog):
 
 
 class AccessibilityDialog(wx.Dialog):
-    def __init__(self, parent, acc_config):
-        super().__init__(parent, title="Accessibility & TTS Settings - ASPlayer", size=(460, 380))
+    def __init__(self, parent, acc_config, current_lang="en"):
+        self.current_lang = current_lang
+        tr = TRANSLATIONS[current_lang]
+        super().__init__(parent, title=tr["acc_dialog_title"], size=(460, 380))
         self.acc_config = dict(acc_config)
         
         self.voices_list = []
@@ -176,11 +346,11 @@ class AccessibilityDialog(wx.Dialog):
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        lbl_engine = wx.StaticText(panel, label="Subtitle Speech Output Engine:")
+        lbl_engine = wx.StaticText(panel, label=tr["tts_engine_label"])
         sizer.Add(lbl_engine, 0, wx.ALL, 10)
 
-        self.rb_screen_reader = wx.RadioButton(panel, label="System Screen Reader (NVDA / JAWS - Default)", style=wx.RB_GROUP)
-        self.rb_sapi_tts = wx.RadioButton(panel, label="Built-in Windows TTS (SAPI5)")
+        self.rb_screen_reader = wx.RadioButton(panel, label=tr["tts_screen_reader"], style=wx.RB_GROUP)
+        self.rb_sapi_tts = wx.RadioButton(panel, label=tr["tts_sapi5"])
 
         if self.acc_config.get("tts_engine", "screen_reader") == "sapi5":
             self.rb_sapi_tts.SetValue(True)
@@ -193,7 +363,7 @@ class AccessibilityDialog(wx.Dialog):
         self.tts_panel = wx.Panel(panel)
         tts_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        lbl_voice = wx.StaticText(self.tts_panel, label="TTS Voice:")
+        lbl_voice = wx.StaticText(self.tts_panel, label=tr["tts_voice_label"])
         tts_sizer.Add(lbl_voice, 0, wx.BOTTOM, 3)
 
         voice_names = [v[1] for v in self.voices_list] if self.voices_list else ["Default System Voice"]
@@ -208,12 +378,12 @@ class AccessibilityDialog(wx.Dialog):
         self.choice_voice.SetSelection(selected_idx)
         tts_sizer.Add(self.choice_voice, 0, wx.EXPAND | wx.BOTTOM, 10)
 
-        lbl_rate = wx.StaticText(self.tts_panel, label="Speech Rate (Speed):")
+        lbl_rate = wx.StaticText(self.tts_panel, label=tr["tts_rate_label"])
         tts_sizer.Add(lbl_rate, 0, wx.BOTTOM, 3)
         self.slider_rate = wx.Slider(self.tts_panel, value=self.acc_config.get("tts_rate", 200), minValue=100, maxValue=400, style=wx.SL_HORIZONTAL | wx.SL_LABELS)
         tts_sizer.Add(self.slider_rate, 0, wx.EXPAND | wx.BOTTOM, 10)
 
-        lbl_vol = wx.StaticText(self.tts_panel, label="Speech Volume (%):")
+        lbl_vol = wx.StaticText(self.tts_panel, label=tr["tts_vol_label"])
         tts_sizer.Add(lbl_vol, 0, wx.BOTTOM, 3)
         self.slider_vol = wx.Slider(self.tts_panel, value=self.acc_config.get("tts_volume", 100), minValue=0, maxValue=100, style=wx.SL_HORIZONTAL | wx.SL_LABELS)
         tts_sizer.Add(self.slider_vol, 0, wx.EXPAND | wx.BOTTOM, 5)
@@ -222,9 +392,9 @@ class AccessibilityDialog(wx.Dialog):
         sizer.Add(self.tts_panel, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 15)
 
         btn_sizer = wx.StdDialogButtonSizer()
-        self.btn_test = wx.Button(panel, label="&Test Voice")
-        btn_ok = wx.Button(panel, wx.ID_OK, "Save")
-        btn_cancel = wx.Button(panel, wx.ID_CANCEL, "Cancel")
+        self.btn_test = wx.Button(panel, label=tr["tts_test_btn"])
+        btn_ok = wx.Button(panel, wx.ID_OK, tr["save"])
+        btn_cancel = wx.Button(panel, wx.ID_CANCEL, tr["cancel"])
 
         btn_sizer.AddButton(btn_ok)
         btn_sizer.AddButton(btn_cancel)
@@ -258,6 +428,7 @@ class AccessibilityDialog(wx.Dialog):
         vol = self.slider_vol.GetValue() / 100.0
         sel_idx = self.choice_voice.GetSelection()
         voice_id = self.voices_list[sel_idx][0] if (self.voices_list and sel_idx != wx.NOT_FOUND) else None
+        test_phrase = TRANSLATIONS[self.current_lang]["tts_test_phrase"]
 
         def _speak_test():
             try:
@@ -266,7 +437,7 @@ class AccessibilityDialog(wx.Dialog):
                     eng.setProperty('voice', voice_id)
                 eng.setProperty('rate', rate)
                 eng.setProperty('volume', vol)
-                eng.say("This is a test of the ASPlayer subtitle voice settings.")
+                eng.say(test_phrase)
                 eng.runAndWait()
                 eng.stop()
             except Exception:
@@ -287,11 +458,12 @@ class AccessibilityDialog(wx.Dialog):
 
 
 class PreferencesDialog(wx.Dialog):
-    def __init__(self, parent, resume_enabled, current_lang):
+    def __init__(self, parent, resume_enabled, current_lang, current_theme):
         title_str = TRANSLATIONS[current_lang]["prefs_title"]
-        super().__init__(parent, title=title_str, size=(440, 310))
+        super().__init__(parent, title=title_str, size=(440, 360))
         self.resume_enabled = resume_enabled
         self.current_lang = current_lang
+        self.current_theme = current_theme
         
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -322,6 +494,20 @@ class PreferencesDialog(wx.Dialog):
             self.lang_choice_ctrl.SetSelection(0)
             
         sizer.Add(self.lang_choice_ctrl, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+
+        self.lbl_theme_heading = wx.StaticText(panel, label=TRANSLATIONS[current_lang]["app_theme"])
+        sizer.Add(self.lbl_theme_heading, 0, wx.ALL, 10)
+
+        self.theme_choices = [
+            TRANSLATIONS[current_lang]["theme_dark"],
+            TRANSLATIONS[current_lang]["theme_midnight"],
+            TRANSLATIONS[current_lang]["theme_oled"]
+        ]
+        self.theme_choice_ctrl = wx.Choice(panel, choices=self.theme_choices)
+        
+        theme_map = {"dark": 0, "midnight": 1, "oled": 2}
+        self.theme_choice_ctrl.SetSelection(theme_map.get(self.current_theme, 0))
+        sizer.Add(self.theme_choice_ctrl, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
         
         btn_sizer = wx.StdDialogButtonSizer()
         self.btn_ok = wx.Button(panel, wx.ID_OK, TRANSLATIONS[current_lang]["save"])
@@ -341,10 +527,17 @@ class PreferencesDialog(wx.Dialog):
         sel = self.lang_choice_ctrl.GetSelection()
         return "id" if sel == 1 else "en"
 
+    def get_theme_setting(self):
+        sel = self.theme_choice_ctrl.GetSelection()
+        keys = ["dark", "midnight", "oled"]
+        return keys[sel] if 0 <= sel < len(keys) else "dark"
+
 
 class PlaylistDialog(wx.Dialog):
-    def __init__(self, parent, playlist, current_index):
-        super().__init__(parent, title="Playlist Manager - ASPlayer", size=(550, 400))
+    def __init__(self, parent, playlist, current_index, current_lang="en"):
+        self.current_lang = current_lang
+        tr = TRANSLATIONS[current_lang]
+        super().__init__(parent, title=tr["playlist_title"], size=(550, 400))
         self.parent_frame = parent
         self.playlist = list(playlist)
         self.current_index = current_index
@@ -352,7 +545,7 @@ class PlaylistDialog(wx.Dialog):
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
         
-        lbl = wx.StaticText(panel, label="Playlist Items (Press Enter to play selected item):")
+        lbl = wx.StaticText(panel, label=tr["playlist_lbl"])
         sizer.Add(lbl, 0, wx.ALL, 10)
         
         self.listbox = wx.ListBox(panel, style=wx.LB_SINGLE)
@@ -360,25 +553,25 @@ class PlaylistDialog(wx.Dialog):
         sizer.Add(self.listbox, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
         
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        btn_add = wx.Button(panel, label="&Add Files...")
-        btn_remove = wx.Button(panel, label="&Remove Selected")
-        btn_clear = wx.Button(panel, label="&Clear All")
-        btn_play = wx.Button(panel, label="&Play Selected")
-        btn_close = wx.Button(panel, wx.ID_CANCEL, "Close")
+        self.btn_add = wx.Button(panel, label=tr["playlist_add"])
+        self.btn_remove = wx.Button(panel, label=tr["playlist_remove"])
+        self.btn_clear = wx.Button(panel, label=tr["playlist_clear"])
+        self.btn_play = wx.Button(panel, label=tr["playlist_play"])
+        self.btn_close = wx.Button(panel, wx.ID_CANCEL, tr["close"])
         
-        btn_sizer.Add(btn_add, 0, wx.RIGHT, 5)
-        btn_sizer.Add(btn_remove, 0, wx.RIGHT, 5)
-        btn_sizer.Add(btn_clear, 0, wx.RIGHT, 5)
-        btn_sizer.Add(btn_play, 0, wx.RIGHT, 5)
-        btn_sizer.Add(btn_close, 0)
+        btn_sizer.Add(self.btn_add, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_remove, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_clear, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_play, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_close, 0)
         
         sizer.Add(btn_sizer, 0, wx.ALL | wx.ALIGN_CENTER, 10)
         panel.SetSizer(sizer)
         
-        btn_add.Bind(wx.EVT_BUTTON, self.on_add_files)
-        btn_remove.Bind(wx.EVT_BUTTON, self.on_remove_item)
-        btn_clear.Bind(wx.EVT_BUTTON, self.on_clear_all)
-        btn_play.Bind(wx.EVT_BUTTON, self.on_play_selected)
+        self.btn_add.Bind(wx.EVT_BUTTON, self.on_add_files)
+        self.btn_remove.Bind(wx.EVT_BUTTON, self.on_remove_item)
+        self.btn_clear.Bind(wx.EVT_BUTTON, self.on_clear_all)
+        self.btn_play.Bind(wx.EVT_BUTTON, self.on_play_selected)
         self.listbox.Bind(wx.EVT_LISTBOX_DCLICK, self.on_play_selected)
         self.listbox.Bind(wx.EVT_KEY_DOWN, self.on_list_key)
         
@@ -461,7 +654,6 @@ class AsplayerWindow(wx.Frame):
         self.vlc_instance = vlc.Instance(
             "--no-video-title-show",
             "--no-osd",
-            "--sub-source=",
             "--network-caching=3000",
             "--no-lua",
             "--quiet"
@@ -480,8 +672,14 @@ class AsplayerWindow(wx.Frame):
         self.sub_enabled = True
         self.sub_position = 0
         self.per_line_offsets = {}
+        self.sub_style = {
+            "font_size": "Normal",
+            "text_color": "White",
+            "bg_color": "Black Translucent"
+        }
         
         self.init_ui()
+        self.apply_theme()
         self.init_timer()
         self.Bind(wx.EVT_CLOSE, self.on_window_close)
         self.Center()
@@ -495,14 +693,14 @@ class AsplayerWindow(wx.Frame):
         default_cfg = {
             "resume_playback": True,
             "language": "en",
+            "theme": "dark",
             "positions": {},
             "subtitles": {},
             "accessibility": {
                 "tts_engine": "screen_reader",
                 "tts_voice_id": "",
                 "tts_rate": 200,
-                "tts_volume": 100,
-                "hardsub_ocr": False
+                "tts_volume": 100
             }
         }
         if os.path.exists(self.config_file):
@@ -524,6 +722,19 @@ class AsplayerWindow(wx.Frame):
         except Exception:
             pass
 
+    def apply_theme(self):
+        theme = self.config.get("theme", "dark")
+        if theme == "midnight":
+            bg_color = wx.Colour(15, 23, 42)
+        elif theme == "oled":
+            bg_color = wx.Colour(0, 0, 0)
+        else:
+            bg_color = wx.Colour(30, 30, 30)
+            
+        if hasattr(self, 'video_panel') and self.video_panel:
+            self.video_panel.SetBackgroundColour(bg_color)
+            self.video_panel.Refresh()
+
     def record_current_position(self):
         if self.current_video_path and not self.current_video_path.startswith(("http://", "https://")) and self.player:
             current_ms = self.player.get_time()
@@ -543,7 +754,8 @@ class AsplayerWindow(wx.Frame):
                 "offset_ms": self.sub_offset_ms,
                 "enabled": self.sub_enabled,
                 "position": self.sub_position,
-                "per_line_offsets": serialized_per_line
+                "per_line_offsets": serialized_per_line,
+                "style": self.sub_style
             }
             self.save_config()
 
@@ -554,6 +766,11 @@ class AsplayerWindow(wx.Frame):
         self.sub_position = sub_cfg.get("position", 0)
         raw_per_line = sub_cfg.get("per_line_offsets", {})
         self.per_line_offsets = {int(k): v for k, v in raw_per_line.items()}
+        self.sub_style = sub_cfg.get("style", {
+            "font_size": "Normal",
+            "text_color": "White",
+            "bg_color": "Black Translucent"
+        })
 
     def init_ui(self):
         panel = wx.Panel(self)
@@ -618,6 +835,10 @@ class AsplayerWindow(wx.Frame):
         playback_menu.Append(self.ID_PB_FORWARD, self.tr("fwd_5s"))
         playback_menu.AppendSeparator()
         
+        playback_menu.Append(self.ID_PB_NEXT, self.tr("next_item"))
+        playback_menu.Append(self.ID_PB_PREV, self.tr("prev_item"))
+        playback_menu.AppendSeparator()
+        
         jump_submenu = wx.Menu()
         self.ID_JUMP_REW_30S = wx.NewIdRef()
         self.ID_JUMP_FWD_30S = wx.NewIdRef()
@@ -626,12 +847,12 @@ class AsplayerWindow(wx.Frame):
         self.ID_JUMP_REW_5M = wx.NewIdRef()
         self.ID_JUMP_FWD_5M = wx.NewIdRef()
         
-        jump_submenu.Append(self.ID_JUMP_REW_30S, "Jump Backward 30 Seconds\tCtrl+Left")
-        jump_submenu.Append(self.ID_JUMP_FWD_30S, "Jump Forward 30 Seconds\tCtrl+Right")
-        jump_submenu.Append(self.ID_JUMP_REW_1M, "Jump Backward 1 Minute\tShift+Left")
-        jump_submenu.Append(self.ID_JUMP_FWD_1M, "Jump Forward 1 Minute\tShift+Right")
-        jump_submenu.Append(self.ID_JUMP_REW_5M, "Jump Backward 5 Minutes\tCtrl+PgUp")
-        jump_submenu.Append(self.ID_JUMP_FWD_5M, "Jump Forward 5 Minutes\tCtrl+PgDn")
+        jump_submenu.Append(self.ID_JUMP_REW_30S, self.tr("jump_rew_30s"))
+        jump_submenu.Append(self.ID_JUMP_FWD_30S, self.tr("jump_fwd_30s"))
+        jump_submenu.Append(self.ID_JUMP_REW_1M, self.tr("jump_rew_1m"))
+        jump_submenu.Append(self.ID_JUMP_FWD_1M, self.tr("jump_fwd_1m"))
+        jump_submenu.Append(self.ID_JUMP_REW_5M, self.tr("jump_rew_5m"))
+        jump_submenu.Append(self.ID_JUMP_FWD_5M, self.tr("jump_fwd_5m"))
         
         playback_menu.AppendSubMenu(jump_submenu, self.tr("jump_to"))
         
@@ -640,15 +861,11 @@ class AsplayerWindow(wx.Frame):
         self.ID_VOL_DOWN = wx.NewIdRef()
         self.ID_VOL_MUTE = wx.NewIdRef()
         
-        volume_submenu.Append(self.ID_VOL_UP, "Volume Up\tUp")
-        volume_submenu.Append(self.ID_VOL_DOWN, "Volume Down\tDown")
-        volume_submenu.Append(self.ID_VOL_MUTE, "Mute / Unmute\tM")
+        volume_submenu.Append(self.ID_VOL_UP, self.tr("vol_up"))
+        volume_submenu.Append(self.ID_VOL_DOWN, self.tr("vol_down"))
+        volume_submenu.Append(self.ID_VOL_MUTE, self.tr("vol_mute"))
         
         playback_menu.AppendSubMenu(volume_submenu, self.tr("volume"))
-        
-        playback_menu.AppendSeparator()
-        playback_menu.Append(self.ID_PB_NEXT, self.tr("next_item"))
-        playback_menu.Append(self.ID_PB_PREV, self.tr("prev_item"))
         playback_menu.AppendSeparator()
         
         self.menu_resume_item = playback_menu.AppendCheckItem(
@@ -662,6 +879,7 @@ class AsplayerWindow(wx.Frame):
         
         sub_settings_menu = wx.Menu()
         self.ID_SUB_TOGGLE = wx.NewIdRef()
+        self.ID_SUB_APPEARANCE = wx.NewIdRef()
         self.ID_SUB_POS_BOTTOM = wx.NewIdRef()
         self.ID_SUB_POS_TOP = wx.NewIdRef()
         
@@ -674,44 +892,38 @@ class AsplayerWindow(wx.Frame):
         self.ID_SUB_DEC_50 = wx.NewIdRef()
         self.ID_SUB_RESET_SYNC = wx.NewIdRef()
         
-        sub_sync_menu.Append(self.ID_SUB_INC_05, "Increase subtitle 0.5 second\t>")
-        sub_sync_menu.Append(self.ID_SUB_DEC_05, "Decrease subtitle 0.5 second\t<")
-        sub_sync_menu.Append(self.ID_SUB_INC_5, "Increase subtitle 5 second\tCtrl+>")
-        sub_sync_menu.Append(self.ID_SUB_DEC_5, "Decrease subtitle 5 second\tCtrl+<")
-        sub_sync_menu.Append(self.ID_SUB_INC_50, "Increase subtitle 50 second\tShift+>")
-        sub_sync_menu.Append(self.ID_SUB_DEC_50, "Decrease subtitle 50 second\tShift+<")
+        sub_sync_menu.Append(self.ID_SUB_INC_05, self.tr("sub_inc_05"))
+        sub_sync_menu.Append(self.ID_SUB_DEC_05, self.tr("sub_dec_05"))
+        sub_sync_menu.Append(self.ID_SUB_INC_5, self.tr("sub_inc_5"))
+        sub_sync_menu.Append(self.ID_SUB_DEC_5, self.tr("sub_dec_5"))
+        sub_sync_menu.Append(self.ID_SUB_INC_50, self.tr("sub_inc_50"))
+        sub_sync_menu.Append(self.ID_SUB_DEC_50, self.tr("sub_dec_50"))
         sub_sync_menu.AppendSeparator()
         
         self.ID_SUB_APPLY_CURRENT_ONLY = wx.NewIdRef()
         self.menu_apply_current_item = sub_sync_menu.AppendCheckItem(
             self.ID_SUB_APPLY_CURRENT_ONLY,
-            "Apply to current line only"
+            self.tr("sub_apply_current")
         )
         sub_sync_menu.AppendSeparator()
-        sub_sync_menu.Append(self.ID_SUB_RESET_SYNC, "Reset Subtitle Sync to Default")
+        sub_sync_menu.Append(self.ID_SUB_RESET_SYNC, self.tr("sub_reset"))
         
-        self.menu_sub_toggle_item = sub_settings_menu.AppendCheckItem(self.ID_SUB_TOGGLE, "Show / Hide Subtitle")
+        self.menu_sub_toggle_item = sub_settings_menu.AppendCheckItem(self.ID_SUB_TOGGLE, self.tr("sub_toggle"))
         self.menu_sub_toggle_item.Check(True)
         
-        sub_settings_menu.AppendSubMenu(sub_sync_menu, "Subtitle Sync Menu")
+        sub_settings_menu.Append(self.ID_SUB_APPEARANCE, self.tr("sub_appearance"))
         sub_settings_menu.AppendSeparator()
-        sub_settings_menu.Append(self.ID_SUB_POS_BOTTOM, "Position: Bottom")
-        sub_settings_menu.Append(self.ID_SUB_POS_TOP, "Position: Top")
+        sub_settings_menu.AppendSubMenu(sub_sync_menu, self.tr("sub_sync_menu"))
+        sub_settings_menu.AppendSeparator()
+        sub_settings_menu.Append(self.ID_SUB_POS_BOTTOM, self.tr("sub_pos_bottom"))
+        sub_settings_menu.Append(self.ID_SUB_POS_TOP, self.tr("sub_pos_top"))
         
         tools_menu.AppendSubMenu(sub_settings_menu, self.tr("sub_menu"))
         tools_menu.AppendSeparator()
         
         accessibility_menu = wx.Menu()
         self.ID_ACC_TTS_SETTINGS = wx.NewIdRef()
-        self.ID_ACC_HARDSUB_OCR = wx.NewIdRef()
-        
         accessibility_menu.Append(self.ID_ACC_TTS_SETTINGS, self.tr("tts_settings"))
-        accessibility_menu.AppendSeparator()
-        self.menu_hardsub_ocr_item = accessibility_menu.AppendCheckItem(
-            self.ID_ACC_HARDSUB_OCR,
-            self.tr("hardsub_ocr")
-        )
-        self.menu_hardsub_ocr_item.Check(self.config.get("accessibility", {}).get("hardsub_ocr", False))
         
         tools_menu.AppendSubMenu(accessibility_menu, self.tr("acc_menu"))
         tools_menu.AppendSeparator()
@@ -757,6 +969,7 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_toggle_mute, id=self.ID_VOL_MUTE)
         
         self.Bind(wx.EVT_MENU, self.on_toggle_subtitle_visibility, id=self.ID_SUB_TOGGLE)
+        self.Bind(wx.EVT_MENU, self.on_open_subtitle_appearance, id=self.ID_SUB_APPEARANCE)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(500), id=self.ID_SUB_INC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(-500), id=self.ID_SUB_DEC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(5000), id=self.ID_SUB_INC_5)
@@ -768,7 +981,6 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda e: self.set_subtitle_position(1), id=self.ID_SUB_POS_TOP)
         
         self.Bind(wx.EVT_MENU, self.on_open_accessibility_dialog, id=self.ID_ACC_TTS_SETTINGS)
-        self.Bind(wx.EVT_MENU, self.on_toggle_hardsub_ocr, id=self.ID_ACC_HARDSUB_OCR)
         
         self.Bind(wx.EVT_MENU, self.on_next_item, id=self.ID_PB_NEXT)
         self.Bind(wx.EVT_MENU, self.on_prev_item, id=self.ID_PB_PREV)
@@ -876,7 +1088,8 @@ class AsplayerWindow(wx.Frame):
         dlg.Destroy()
 
     def on_open_playlist_dialog(self, event):
-        dlg = PlaylistDialog(self, self.playlist, self.playlist_index)
+        current_lang = self.config.get("language", "en")
+        dlg = PlaylistDialog(self, self.playlist, self.playlist_index, current_lang=current_lang)
         dlg.ShowModal()
         dlg.Destroy()
 
@@ -943,48 +1156,65 @@ class AsplayerWindow(wx.Frame):
         srt_path = os.path.join(folder_dir, base_name + ".srt")
         
         if os.path.exists(srt_path):
-            loaded = False
-            for enc in ['utf-8', 'cp1252', 'latin-1', 'utf-16']:
-                try:
-                    self.srt_subtitles = pysrt.open(srt_path, encoding=enc)
-                    self.current_sub_index = -1
-                    self.speak("Subtitle loaded")
-                    loaded = True
-                    break
-                except Exception:
-                    continue
-            if not loaded:
-                self.srt_subtitles = None
+            self.load_subtitle_file(srt_path)
         else:
             self.srt_subtitles = None
             self.current_sub_index = -1
+            try:
+                self.player.video_set_subtitle_file("")
+            except Exception:
+                pass
+
+    def load_subtitle_file(self, srt_path):
+        loaded = False
+        for enc in ['utf-8', 'cp1252', 'latin-1', 'utf-16']:
+            try:
+                self.srt_subtitles = pysrt.open(srt_path, encoding=enc)
+                self.current_sub_index = -1
+                loaded = True
+                break
+            except Exception:
+                continue
+        if loaded:
+            self.speak("Subtitle loaded successfully")
+            try:
+                self.player.video_set_subtitle_file(srt_path)
+            except Exception:
+                pass
+        else:
+            self.srt_subtitles = None
+            self.speak("Failed to load subtitle file due to encoding error")
 
     def on_open_sub_dialog(self, event):
         wildcard = "Subtitle Files (*.srt)|*.srt|All files (*.*)|*.*"
         dlg = wx.FileDialog(self, "Open Subtitle File", wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            loaded = False
-            for enc in ['utf-8', 'cp1252', 'latin-1', 'utf-16']:
-                try:
-                    self.srt_subtitles = pysrt.open(path, encoding=enc)
-                    self.current_sub_index = -1
-                    self.speak("Subtitle file loaded successfully")
-                    loaded = True
-                    break
-                except Exception:
-                    continue
-            if not loaded:
-                self.speak("Failed to load subtitle file due to encoding error")
+            self.load_subtitle_file(path)
         dlg.Destroy()
 
     def on_toggle_subtitle_visibility(self, event):
         self.sub_enabled = self.menu_sub_toggle_item.IsChecked()
         self.save_current_subtitle_settings()
+        try:
+            track_idx = 1 if self.sub_enabled else 0
+            self.player.video_set_subtitle_track(track_idx)
+        except Exception:
+            pass
+            
         if self.sub_enabled:
             self.speak("Subtitles shown")
         else:
             self.speak("Subtitles hidden")
+
+    def on_open_subtitle_appearance(self, event):
+        current_lang = self.config.get("language", "en")
+        dlg = SubtitleAppearanceDialog(self, self.sub_style, current_lang=current_lang)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.sub_style = dlg.get_style()
+            self.save_current_subtitle_settings()
+            self.speak("Subtitle appearance settings saved")
+        dlg.Destroy()
 
     def adjust_subtitle_sync(self, delta_ms):
         apply_current_only = self.menu_apply_current_item.IsChecked()
@@ -1015,10 +1245,11 @@ class AsplayerWindow(wx.Frame):
         self.speak(f"Subtitle position set to {pos_name}")
 
     def on_announce_status(self, event):
+        current_lang = self.config.get("language", "en")
         if not self.current_video_path:
             msg = self.tr("no_media")
             self.speak(msg)
-            dlg = MediaInfoDialog(self, msg, title=self.tr("media_info_title"))
+            dlg = MediaInfoDialog(self, msg, current_lang=current_lang)
             dlg.ShowModal()
             dlg.Destroy()
             return
@@ -1067,28 +1298,20 @@ class AsplayerWindow(wx.Frame):
             f"Subtitle   : {sub_status}\n"
             f"Playlist   : Item {self.playlist_index + 1} of {len(self.playlist)}"
         )
-        dlg = MediaInfoDialog(self, detail_text, title=self.tr("media_info_title"))
+        dlg = MediaInfoDialog(self, detail_text, current_lang=current_lang)
         dlg.ShowModal()
         dlg.Destroy()
 
     def on_open_accessibility_dialog(self, event):
         acc_cfg = self.config.get("accessibility", {})
-        dlg = AccessibilityDialog(self, acc_cfg)
+        current_lang = self.config.get("language", "en")
+        dlg = AccessibilityDialog(self, acc_cfg, current_lang=current_lang)
         if dlg.ShowModal() == wx.ID_OK:
             new_settings = dlg.get_settings()
             self.config["accessibility"].update(new_settings)
             self.save_config()
             self.speak("Accessibility and speech settings saved")
         dlg.Destroy()
-
-    def on_toggle_hardsub_ocr(self, event):
-        is_checked = self.menu_hardsub_ocr_item.IsChecked()
-        self.config["accessibility"]["hardsub_ocr"] = is_checked
-        self.save_config()
-        if is_checked:
-            self.speak("Hardsub OCR reader enabled")
-        else:
-            self.speak("Hardsub OCR reader disabled")
 
     def on_toggle_resume_mode(self, event):
         is_checked = self.menu_resume_item.IsChecked()
@@ -1100,20 +1323,29 @@ class AsplayerWindow(wx.Frame):
             self.speak("Always play from beginning enabled")
 
     def on_preferences(self, event):
-        dlg = PreferencesDialog(self, self.config.get("resume_playback", True), self.config.get("language", "en"))
+        dlg = PreferencesDialog(
+            self, 
+            self.config.get("resume_playback", True), 
+            self.config.get("language", "en"),
+            self.config.get("theme", "dark")
+        )
         if dlg.ShowModal() == wx.ID_OK:
             new_resume = dlg.get_resume_setting()
             new_lang = dlg.get_language_setting()
+            new_theme = dlg.get_theme_setting()
             
             self.config["resume_playback"] = new_resume
             self.config["language"] = new_lang
+            self.config["theme"] = new_theme
             self.menu_resume_item.Check(new_resume)
             self.save_config()
+            self.apply_theme()
             self.speak(self.tr("prefs_saved"))
         dlg.Destroy()
 
     def on_about(self, event):
-        dlg = AboutDialog(self, title=self.tr("about_title"))
+        current_lang = self.config.get("language", "en")
+        dlg = AboutDialog(self, current_lang=current_lang)
         dlg.ShowModal()
         dlg.Destroy()
 

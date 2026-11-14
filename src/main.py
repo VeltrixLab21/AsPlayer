@@ -10,7 +10,6 @@ import accessible_output2.outputs.auto
 
 VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.ts', '.flv', '.wmv', '.m4v')
 
-# Kamus Lokalisasi Ringan (English & Bahasa Indonesia)
 TRANSLATIONS = {
     "en": {
         "menu_file": "&File",
@@ -20,6 +19,7 @@ TRANSLATIONS = {
         "open_url": "Open URL...\tCtrl+U",
         "open_sub": "Open Subtitle (.srt)...\tAlt+O",
         "playlist_mgr": "Playlist Manager...\tCtrl+L",
+        "media_info": "Media Information...\tCtrl+I",
         "exit": "Exit\tAlt+F4",
         "menu_view": "&View",
         "fs_keep_ar": "Fullscreen (Keep AR)\tF11",
@@ -37,25 +37,34 @@ TRANSLATIONS = {
         "menu_tools": "&Tools",
         "sub_menu": "Subtitle Menu",
         "acc_menu": "Accessibility",
-        "announce_info": "Media Info & Status...\tCtrl+I",
         "tts_settings": "Speech & TTS Settings...",
         "hardsub_ocr": "Read Hardsub (OCR Mode)",
         "preferences": "Preferences...\tCtrl+Shift+P",
+        "about_menu": "About ASPlayer...",
         "paused": "Paused",
         "playing": "Playing",
         "stopped": "Stopped",
         "no_media": "No media currently loaded.",
         "media_info_title": "Media Information - ASPlayer",
-        "prefs_saved": "Preferences saved. Some menu labels will fully update on next restart."
+        "about_title": "About ASPlayer",
+        "prefs_title": "Preferences - ASPlayer",
+        "prefs_saved": "Preferences saved. Some menu labels will fully update on next restart.",
+        "startup_behavior": "Startup Playback Behavior:",
+        "play_beginning": "Always play from beginning",
+        "resume_watched": "Resume from last watched position",
+        "app_language": "Application Language:",
+        "save": "Save",
+        "cancel": "Cancel"
     },
     "id": {
-        "menu_file": "&File",
+        "menu_file": "&Berkas",
         "menu_open": "&Buka",
-        "open_file": "Buka File...\tCtrl+O",
+        "open_file": "Buka Berkas...\tCtrl+O",
         "open_folder": "Buka Folder...\tCtrl+Shift+O",
         "open_url": "Buka URL...\tCtrl+U",
         "open_sub": "Buka Subtitle (.srt)...\tAlt+O",
         "playlist_mgr": "Pengelola Daftar Putar...\tCtrl+L",
+        "media_info": "Informasi Media...\tCtrl+I",
         "exit": "Keluar\tAlt+F4",
         "menu_view": "&Tampilan",
         "fs_keep_ar": "Layar Penuh (Rasio Asli)\tF11",
@@ -73,23 +82,31 @@ TRANSLATIONS = {
         "menu_tools": "&Alat",
         "sub_menu": "Menu Subtitle",
         "acc_menu": "Aksesibilitas",
-        "announce_info": "Info Media & Status...\tCtrl+I",
         "tts_settings": "Pengaturan Suara & TTS...",
         "hardsub_ocr": "Baca Hardsub (Mode OCR)",
         "preferences": "Preferensi...\tCtrl+Shift+P",
+        "about_menu": "Tentang ASPlayer...",
         "paused": "Dijeda",
         "playing": "Memutar",
         "stopped": "Dihentikan",
         "no_media": "Belum ada media yang dimuat.",
         "media_info_title": "Informasi Media - ASPlayer",
-        "prefs_saved": "Preferensi disimpan. Restart aplikasi untuk memperbarui seluruh label menu."
+        "about_title": "Tentang ASPlayer",
+        "prefs_title": "Preferensi - ASPlayer",
+        "prefs_saved": "Preferensi disimpan. Restart aplikasi untuk memperbarui seluruh label menu.",
+        "startup_behavior": "Perilaku Pemutaran Saat Awal:",
+        "play_beginning": "Selalu putar dari awal",
+        "resume_watched": "Lanjutkan dari posisi terakhir ditonton",
+        "app_language": "Bahasa Aplikasi:",
+        "save": "Simpan",
+        "cancel": "Batal"
     }
 }
 
 
 class MediaInfoDialog(wx.Dialog):
     def __init__(self, parent, info_text, title="Media Information - ASPlayer"):
-        super().__init__(parent, title=title, size=(480, 320))
+        super().__init__(parent, title=title, size=(480, 350))
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -106,6 +123,38 @@ class MediaInfoDialog(wx.Dialog):
 
         panel.SetSizer(sizer)
         self.txt_info.SetFocus()
+        self.CenterOnParent()
+
+
+class AboutDialog(wx.Dialog):
+    def __init__(self, parent, title="About ASPlayer"):
+        super().__init__(parent, title=title, size=(450, 320))
+        panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        about_text = (
+            "ASPlayer v1.0\n"
+            "Professional Accessible Windows Media Player\n\n"
+            "Designed and optimized for screen reader users (NVDA & JAWS),\n"
+            "featuring built-in SAPI5 TTS, subtitle sync,\n"
+            "and native Windows installer support.\n\n"
+            "Powered by Python, wxPython, and libVLC."
+        )
+
+        self.txt_about = wx.TextCtrl(
+            panel,
+            value=about_text,
+            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2 | wx.NO_BORDER
+        )
+        self.txt_about.SetBackgroundColour(panel.GetBackgroundColour())
+        sizer.Add(self.txt_about, 1, wx.EXPAND | wx.ALL, 15)
+
+        btn_ok = wx.Button(panel, wx.ID_OK, "OK")
+        btn_ok.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_OK))
+        sizer.Add(btn_ok, 0, wx.ALIGN_CENTER | wx.BOTTOM, 15)
+
+        panel.SetSizer(sizer)
+        btn_ok.SetFocus()
         self.CenterOnParent()
 
 
@@ -239,18 +288,19 @@ class AccessibilityDialog(wx.Dialog):
 
 class PreferencesDialog(wx.Dialog):
     def __init__(self, parent, resume_enabled, current_lang):
-        super().__init__(parent, title="Preferences - ASPlayer", size=(420, 280))
+        title_str = TRANSLATIONS[current_lang]["prefs_title"]
+        super().__init__(parent, title=title_str, size=(440, 310))
         self.resume_enabled = resume_enabled
         self.current_lang = current_lang
         
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
         
-        lbl_resume = wx.StaticText(panel, label="Startup Playback Behavior:")
-        sizer.Add(lbl_resume, 0, wx.ALL, 10)
+        self.lbl_resume_heading = wx.StaticText(panel, label=TRANSLATIONS[current_lang]["startup_behavior"])
+        sizer.Add(self.lbl_resume_heading, 0, wx.ALL, 10)
         
-        self.rb_beginning = wx.RadioButton(panel, label="Always play from beginning", style=wx.RB_GROUP)
-        self.rb_resume = wx.RadioButton(panel, label="Resume from last watched position")
+        self.rb_beginning = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["play_beginning"], style=wx.RB_GROUP)
+        self.rb_resume = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["resume_watched"])
         
         if self.resume_enabled:
             self.rb_resume.SetValue(True)
@@ -260,8 +310,8 @@ class PreferencesDialog(wx.Dialog):
         sizer.Add(self.rb_beginning, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 5)
         sizer.Add(self.rb_resume, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
         
-        lbl_lang = wx.StaticText(panel, label="Application Language:")
-        sizer.Add(lbl_lang, 0, wx.ALL, 10)
+        self.lbl_lang_heading = wx.StaticText(panel, label=TRANSLATIONS[current_lang]["app_language"])
+        sizer.Add(self.lbl_lang_heading, 0, wx.ALL, 10)
         
         self.lang_choices = ["English", "Bahasa Indonesia"]
         self.lang_choice_ctrl = wx.Choice(panel, choices=self.lang_choices)
@@ -274,10 +324,10 @@ class PreferencesDialog(wx.Dialog):
         sizer.Add(self.lang_choice_ctrl, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
         
         btn_sizer = wx.StdDialogButtonSizer()
-        btn_ok = wx.Button(panel, wx.ID_OK, "Save")
-        btn_cancel = wx.Button(panel, wx.ID_CANCEL, "Cancel")
-        btn_sizer.AddButton(btn_ok)
-        btn_sizer.AddButton(btn_cancel)
+        self.btn_ok = wx.Button(panel, wx.ID_OK, TRANSLATIONS[current_lang]["save"])
+        self.btn_cancel = wx.Button(panel, wx.ID_CANCEL, TRANSLATIONS[current_lang]["cancel"])
+        btn_sizer.AddButton(self.btn_ok)
+        btn_sizer.AddButton(self.btn_cancel)
         btn_sizer.Realize()
         
         sizer.Add(btn_sizer, 0, wx.ALL | wx.ALIGN_RIGHT, 10)
@@ -408,10 +458,10 @@ class AsplayerWindow(wx.Frame):
         except Exception:
             self.speech = None
             
-        # Menambahkan --no-osd dan --quiet untuk menekan notifikasi/teks output internal VLC
         self.vlc_instance = vlc.Instance(
             "--no-video-title-show",
             "--no-osd",
+            "--sub-source=",
             "--network-caching=3000",
             "--no-lua",
             "--quiet"
@@ -511,7 +561,6 @@ class AsplayerWindow(wx.Frame):
         self.video_panel = wx.Panel(panel)
         self.video_panel.SetBackgroundColour(wx.BLACK)
         self.video_panel.SetName("Video Viewport")
-        # Mengarahkan fokus ke panel utama agar screen reader tidak terjebak di window child Direct3D11 VLC
         self.video_panel.SetCanFocus(False)
         panel.SetFocus()
         
@@ -521,7 +570,7 @@ class AsplayerWindow(wx.Frame):
         
         menubar = wx.MenuBar()
         
-        # 1. Menu File
+        # Menu File
         file_menu = wx.Menu()
         open_submenu = wx.Menu()
         
@@ -530,6 +579,7 @@ class AsplayerWindow(wx.Frame):
         self.ID_OPEN_URL = wx.NewIdRef()
         self.ID_OPEN_SUB = wx.NewIdRef()
         self.ID_PLAYLIST = wx.NewIdRef()
+        self.ID_MEDIA_INFO = wx.NewIdRef()
         self.ID_EXIT = wx.NewIdRef()
         
         open_submenu.Append(self.ID_OPEN_VIDEO, self.tr("open_file"))
@@ -540,10 +590,11 @@ class AsplayerWindow(wx.Frame):
         file_menu.Append(self.ID_OPEN_SUB, self.tr("open_sub"))
         file_menu.AppendSeparator()
         file_menu.Append(self.ID_PLAYLIST, self.tr("playlist_mgr"))
+        file_menu.Append(self.ID_MEDIA_INFO, self.tr("media_info"))
         file_menu.AppendSeparator()
         file_menu.Append(self.ID_EXIT, self.tr("exit"))
         
-        # 2. Menu View
+        # Menu View
         view_menu = wx.Menu()
         self.ID_FS_KEEP_AR = wx.NewIdRef()
         self.ID_FS_STRETCH = wx.NewIdRef()
@@ -551,7 +602,7 @@ class AsplayerWindow(wx.Frame):
         view_menu.Append(self.ID_FS_KEEP_AR, self.tr("fs_keep_ar"))
         view_menu.Append(self.ID_FS_STRETCH, self.tr("fs_stretch"))
         
-        # 3. Menu Playback
+        # Menu Playback
         playback_menu = wx.Menu()
         self.ID_PB_PLAYPAUSE = wx.NewIdRef()
         self.ID_PB_STOP = wx.NewIdRef()
@@ -606,7 +657,7 @@ class AsplayerWindow(wx.Frame):
         )
         self.menu_resume_item.Check(self.config.get("resume_playback", True))
         
-        # 4. Menu Tools
+        # Menu Tools
         tools_menu = wx.Menu()
         
         sub_settings_menu = wx.Menu()
@@ -650,13 +701,10 @@ class AsplayerWindow(wx.Frame):
         tools_menu.AppendSubMenu(sub_settings_menu, self.tr("sub_menu"))
         tools_menu.AppendSeparator()
         
-        # Submenu Accessibility
         accessibility_menu = wx.Menu()
-        self.ID_ACC_ANNOUNCE_STATUS = wx.NewIdRef()
         self.ID_ACC_TTS_SETTINGS = wx.NewIdRef()
         self.ID_ACC_HARDSUB_OCR = wx.NewIdRef()
         
-        accessibility_menu.Append(self.ID_ACC_ANNOUNCE_STATUS, self.tr("announce_info"))
         accessibility_menu.Append(self.ID_ACC_TTS_SETTINGS, self.tr("tts_settings"))
         accessibility_menu.AppendSeparator()
         self.menu_hardsub_ocr_item = accessibility_menu.AppendCheckItem(
@@ -669,7 +717,10 @@ class AsplayerWindow(wx.Frame):
         tools_menu.AppendSeparator()
         
         self.ID_PREFERENCES = wx.NewIdRef()
+        self.ID_ABOUT = wx.NewIdRef()
         tools_menu.Append(self.ID_PREFERENCES, self.tr("preferences"))
+        tools_menu.AppendSeparator()
+        tools_menu.Append(self.ID_ABOUT, self.tr("about_menu"))
         
         menubar.Append(file_menu, self.tr("menu_file"))
         menubar.Append(view_menu, self.tr("menu_view"))
@@ -677,12 +728,13 @@ class AsplayerWindow(wx.Frame):
         menubar.Append(tools_menu, self.tr("menu_tools"))
         self.SetMenuBar(menubar)
         
-        # Bind Events
+        # Event Bindings
         self.Bind(wx.EVT_MENU, self.on_open_video_dialog, id=self.ID_OPEN_VIDEO)
         self.Bind(wx.EVT_MENU, self.on_open_folder_dialog, id=self.ID_OPEN_FOLDER)
         self.Bind(wx.EVT_MENU, self.on_open_url_dialog, id=self.ID_OPEN_URL)
         self.Bind(wx.EVT_MENU, self.on_open_sub_dialog, id=self.ID_OPEN_SUB)
         self.Bind(wx.EVT_MENU, self.on_open_playlist_dialog, id=self.ID_PLAYLIST)
+        self.Bind(wx.EVT_MENU, self.on_announce_status, id=self.ID_MEDIA_INFO)
         self.Bind(wx.EVT_MENU, self.on_exit, id=self.ID_EXIT)
         
         self.Bind(wx.EVT_MENU, self.on_fullscreen_keep_ar, id=self.ID_FS_KEEP_AR)
@@ -715,7 +767,6 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, lambda e: self.set_subtitle_position(0), id=self.ID_SUB_POS_BOTTOM)
         self.Bind(wx.EVT_MENU, lambda e: self.set_subtitle_position(1), id=self.ID_SUB_POS_TOP)
         
-        self.Bind(wx.EVT_MENU, self.on_announce_status, id=self.ID_ACC_ANNOUNCE_STATUS)
         self.Bind(wx.EVT_MENU, self.on_open_accessibility_dialog, id=self.ID_ACC_TTS_SETTINGS)
         self.Bind(wx.EVT_MENU, self.on_toggle_hardsub_ocr, id=self.ID_ACC_HARDSUB_OCR)
         
@@ -723,6 +774,7 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_prev_item, id=self.ID_PB_PREV)
         self.Bind(wx.EVT_MENU, self.on_toggle_resume_mode, id=self.ID_PB_TOGGLE_RESUME)
         self.Bind(wx.EVT_MENU, self.on_preferences, id=self.ID_PREFERENCES)
+        self.Bind(wx.EVT_MENU, self.on_about, id=self.ID_ABOUT)
         
         self.Bind(wx.EVT_CONTEXT_MENU, self.on_show_context_menu)
         self.video_panel.Bind(wx.EVT_CONTEXT_MENU, self.on_show_context_menu)
@@ -740,7 +792,7 @@ class AsplayerWindow(wx.Frame):
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_UP, self.ID_VOL_UP),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_DOWN, self.ID_VOL_DOWN),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('m'), self.ID_VOL_MUTE),
-            wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('i'), self.ID_ACC_ANNOUNCE_STATUS),
+            wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('i'), self.ID_MEDIA_INFO),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_PAGEDOWN, self.ID_PB_NEXT),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_PAGEUP, self.ID_PB_PREV),
             wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('o'), self.ID_OPEN_VIDEO),
@@ -859,7 +911,6 @@ class AsplayerWindow(wx.Frame):
         self.player.set_media(media)
         self.player.play()
         
-        # Kembalikan fokus ke window utama agar Direct3D11 VLC tidak mencuri fokus screen reader
         wx.CallAfter(self.SetFocus)
         
         is_url = path.startswith(("http://", "https://"))
@@ -963,7 +1014,6 @@ class AsplayerWindow(wx.Frame):
         pos_name = "Top" if pos == 1 else "Bottom"
         self.speak(f"Subtitle position set to {pos_name}")
 
-    # --- FITUR ACCESSIBILITY MENU (Ctrl+I Media Info Dialog + Speech) ---
     def on_announce_status(self, event):
         if not self.current_video_path:
             msg = self.tr("no_media")
@@ -982,20 +1032,40 @@ class AsplayerWindow(wx.Frame):
         file_name = os.path.basename(self.current_video_path)
         width, height = self.player.video_get_size(0)
         res_str = f"{width}x{height}" if width > 0 and height > 0 else "Audio Only / Unknown"
+        
+        bitrate_kbps = 0
+        try:
+            stats = self.player.get_media().get_stats()
+            if stats and hasattr(stats, 'input_bitrate'):
+                bitrate_kbps = int(stats.input_bitrate * 8 * 1024)
+        except Exception:
+            pass
+            
+        if bitrate_kbps <= 0:
+            try:
+                if not self.current_video_path.startswith(("http://", "https://")) and os.path.exists(self.current_video_path) and total_ms > 0:
+                    file_size_bits = os.path.getsize(self.current_video_path) * 8
+                    duration_sec = total_ms / 1000.0
+                    bitrate_kbps = int((file_size_bits / duration_sec) / 1000)
+            except Exception:
+                pass
+
+        bitrate_str = f"{bitrate_kbps} kbps" if bitrate_kbps > 0 else "Variable / Unknown"
         sub_status = f"Loaded ({len(self.srt_subtitles)} lines)" if self.srt_subtitles else "None"
 
         summary_speech = f"{state_str}, {file_name}, Position {cur_str} of {tot_str}, Volume {vol} percent"
         self.speak(summary_speech)
 
         detail_text = (
-            f"File Name : {file_name}\n"
-            f"Full Path : {self.current_video_path}\n"
-            f"Status    : {state_str}\n"
-            f"Position  : {cur_str} / {tot_str}\n"
-            f"Resolution: {res_str}\n"
-            f"Volume    : {vol}%\n"
-            f"Subtitle  : {sub_status}\n"
-            f"Playlist  : Item {self.playlist_index + 1} of {len(self.playlist)}"
+            f"File Name  : {file_name}\n"
+            f"Full Path  : {self.current_video_path}\n"
+            f"Status     : {state_str}\n"
+            f"Position   : {cur_str} / {tot_str}\n"
+            f"Video Size : {res_str}\n"
+            f"Bitrate    : {bitrate_str}\n"
+            f"Volume     : {vol}%\n"
+            f"Subtitle   : {sub_status}\n"
+            f"Playlist   : Item {self.playlist_index + 1} of {len(self.playlist)}"
         )
         dlg = MediaInfoDialog(self, detail_text, title=self.tr("media_info_title"))
         dlg.ShowModal()
@@ -1042,6 +1112,11 @@ class AsplayerWindow(wx.Frame):
             self.speak(self.tr("prefs_saved"))
         dlg.Destroy()
 
+    def on_about(self, event):
+        dlg = AboutDialog(self, title=self.tr("about_title"))
+        dlg.ShowModal()
+        dlg.Destroy()
+
     def on_exit(self, event):
         self.Close()
 
@@ -1073,6 +1148,7 @@ class AsplayerWindow(wx.Frame):
         
         item_open_sub = menu.Append(wx.ID_ANY, self.tr("open_sub"))
         item_playlist = menu.Append(wx.ID_ANY, self.tr("playlist_mgr"))
+        item_media_info = menu.Append(wx.ID_ANY, self.tr("media_info"))
         menu.AppendSeparator()
         item_play = menu.Append(wx.ID_ANY, self.tr("play_pause"))
         item_next = menu.Append(wx.ID_ANY, self.tr("next_item"))
@@ -1085,6 +1161,7 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_open_url_dialog, item_open_url)
         self.Bind(wx.EVT_MENU, self.on_open_sub_dialog, item_open_sub)
         self.Bind(wx.EVT_MENU, self.on_open_playlist_dialog, item_playlist)
+        self.Bind(wx.EVT_MENU, self.on_announce_status, item_media_info)
         self.Bind(wx.EVT_MENU, self.on_toggle_play, item_play)
         self.Bind(wx.EVT_MENU, self.on_next_item, item_next)
         self.Bind(wx.EVT_MENU, self.on_prev_item, item_prev)

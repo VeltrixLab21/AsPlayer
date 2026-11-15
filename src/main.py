@@ -9,14 +9,15 @@ import accessible_output2.outputs.auto
 
 
 VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.ts', '.flv', '.wmv', '.m4v')
+AUDIO_EXTENSIONS = ('.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.opus')
+MEDIA_EXTENSIONS = VIDEO_EXTENSIONS + AUDIO_EXTENSIONS
 
 TRANSLATIONS = {
     "en": {
         "menu_file": "&File",
         "menu_open": "&Open",
-        "open_file": "Open File...\tCtrl+O",
+        "open_file": "Open Media File...\tCtrl+O",
         "open_folder": "Open Folder...\tCtrl+Shift+O",
-        "open_url": "Open URL...\tCtrl+U",
         "open_sub": "Open Subtitle (.srt)...\tAlt+O",
         "playlist_mgr": "Playlist Manager...\tCtrl+L",
         "media_info": "Media Information...\tCtrl+I",
@@ -95,25 +96,26 @@ TRANSLATIONS = {
         "cancel": "Cancel",
         "close": "Close",
         "playlist_title": "Playlist Manager - ASPlayer",
-        "playlist_lbl": "Playlist Items (Press Enter to play selected item):",
+        "playlist_lbl": "Playlist Items (Press Enter to play, Alt+Up/Down to reorder):",
         "playlist_add": "&Add Files...",
         "playlist_remove": "&Remove Selected",
+        "playlist_move_up": "Move &Up (Alt+Up)",
+        "playlist_move_down": "Move &Down (Alt+Down)",
         "playlist_clear": "&Clear All",
         "playlist_play": "&Play Selected",
         "about_content": (
             "ASPlayer v1.0\n"
-            "Professional Accessible Windows Media Player\n\n"
-            "Designed and optimized for screen reader users (NVDA & JAWS),\n"
-            "featuring built-in SAPI5 TTS, subtitle sync,\n"
-            "and native Windows installer support."
+            "Professional Multimedia & Audio Player\n\n"
+            "A lightweight, fast, and feature-rich media player for Windows.\n"
+            "Supports high-performance video playback, universal audio formats,\n"
+            "precise subtitle synchronization, and robust playlist management."
         )
     },
     "id": {
         "menu_file": "&Berkas",
         "menu_open": "&Buka",
-        "open_file": "Buka Berkas...\tCtrl+O",
+        "open_file": "Buka Berkas Media...\tCtrl+O",
         "open_folder": "Buka Folder...\tCtrl+Shift+O",
-        "open_url": "Buka URL...\tCtrl+U",
         "open_sub": "Buka Subtitle (.srt)...\tAlt+O",
         "playlist_mgr": "Pengelola Daftar Putar...\tCtrl+L",
         "media_info": "Informasi Media...\tCtrl+I",
@@ -192,17 +194,19 @@ TRANSLATIONS = {
         "cancel": "Batal",
         "close": "Tutup",
         "playlist_title": "Pengelola Daftar Putar - ASPlayer",
-        "playlist_lbl": "Item Daftar Putar (Tekan Enter untuk memutar item yang dipilih):",
+        "playlist_lbl": "Item Daftar Putar (Tekan Enter untuk memutar, Alt+Atas/Bawah untuk ubah urutan):",
         "playlist_add": "&Tambah Berkas...",
         "playlist_remove": "&Hapus Terpilih",
+        "playlist_move_up": "Geser &Naik (Alt+Atas)",
+        "playlist_move_down": "Geser &Turun (Alt+Bawah)",
         "playlist_clear": "&Bersihkan Semua",
         "playlist_play": "&Putar Terpilih",
         "about_content": (
             "ASPlayer v1.0\n"
-            "Pemutar Media Windows Profesional yang Aksesibel\n\n"
-            "Dirancang dan dioptimalkan untuk pengguna pembaca layar (NVDA & JAWS),\n"
-            "dilengkapi TTS SAPI5 bawaan, sinkronisasi subtitle,\n"
-            "serta dukungan pemasang asli Windows."
+            "Pemutar Multimedia & Audio Profesional\n\n"
+            "Pemutar media yang ringan, cepat, dan kaya fitur untuk Windows.\n"
+            "Mendukung pemutaran video berperforma tinggi, format audio universal,\n"
+            "sinkronisasi subtitle presisi, dan manajemen daftar putar yang andal."
         )
     }
 }
@@ -217,11 +221,11 @@ class SubtitleAppearanceDialog(wx.Dialog):
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
         
-        # Font Size
         lbl_size = wx.StaticText(panel, label=tr["sub_size_lbl"])
         sizer.Add(lbl_size, 0, wx.ALL, 8)
         self.size_choices = ["Small", "Normal", "Large", "Extra Large"]
         self.size_choice = wx.Choice(panel, choices=self.size_choices)
+        self.size_choice.SetName("Font Size")
         
         current_size = self.sub_style.get("font_size", "Normal")
         if current_size in self.size_choices:
@@ -230,11 +234,11 @@ class SubtitleAppearanceDialog(wx.Dialog):
             self.size_choice.SetSelection(1)
         sizer.Add(self.size_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
         
-        # Text Color
         lbl_color = wx.StaticText(panel, label=tr["sub_color_lbl"])
         sizer.Add(lbl_color, 0, wx.ALL, 8)
         self.color_choices = ["White", "Yellow", "Green", "Cyan", "Red"]
         self.color_choice = wx.Choice(panel, choices=self.color_choices)
+        self.color_choice.SetName("Text Color")
         
         current_color = self.sub_style.get("text_color", "White")
         if current_color in self.color_choices:
@@ -243,11 +247,11 @@ class SubtitleAppearanceDialog(wx.Dialog):
             self.color_choice.SetSelection(0)
         sizer.Add(self.color_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
         
-        # Background Color
         lbl_bg = wx.StaticText(panel, label=tr["sub_bg_lbl"])
         sizer.Add(lbl_bg, 0, wx.ALL, 8)
         self.bg_choices = ["Transparent", "Black Translucent", "Solid Black"]
         self.bg_choice = wx.Choice(panel, choices=self.bg_choices)
+        self.bg_choice.SetName("Background Color")
         
         current_bg = self.sub_style.get("bg_color", "Black Translucent")
         if current_bg in self.bg_choices:
@@ -256,7 +260,6 @@ class SubtitleAppearanceDialog(wx.Dialog):
             self.bg_choice.SetSelection(1)
         sizer.Add(self.bg_choice, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 15)
         
-        # Buttons
         btn_sizer = wx.StdDialogButtonSizer()
         btn_ok = wx.Button(panel, wx.ID_OK, tr["save"])
         btn_cancel = wx.Button(panel, wx.ID_CANCEL, tr["cancel"])
@@ -289,6 +292,7 @@ class MediaInfoDialog(wx.Dialog):
             value=info_text,
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
         )
+        self.txt_info.SetName("Media Information Text")
         sizer.Add(self.txt_info, 1, wx.EXPAND | wx.ALL, 12)
 
         btn_close = wx.Button(panel, wx.ID_CLOSE, close_lbl)
@@ -315,6 +319,7 @@ class AboutDialog(wx.Dialog):
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2 | wx.NO_BORDER
         )
         self.txt_about.SetBackgroundColour(panel.GetBackgroundColour())
+        self.txt_about.SetName("About Information")
         sizer.Add(self.txt_about, 1, wx.EXPAND | wx.ALL, 15)
 
         btn_ok = wx.Button(panel, wx.ID_OK, "OK")
@@ -351,6 +356,8 @@ class AccessibilityDialog(wx.Dialog):
 
         self.rb_screen_reader = wx.RadioButton(panel, label=tr["tts_screen_reader"], style=wx.RB_GROUP)
         self.rb_sapi_tts = wx.RadioButton(panel, label=tr["tts_sapi5"])
+        self.rb_screen_reader.SetName("Screen Reader Engine")
+        self.rb_sapi_tts.SetName("SAPI5 Engine")
 
         if self.acc_config.get("tts_engine", "screen_reader") == "sapi5":
             self.rb_sapi_tts.SetValue(True)
@@ -368,6 +375,7 @@ class AccessibilityDialog(wx.Dialog):
 
         voice_names = [v[1] for v in self.voices_list] if self.voices_list else ["Default System Voice"]
         self.choice_voice = wx.Choice(self.tts_panel, choices=voice_names)
+        self.choice_voice.SetName("TTS Voice")
         
         saved_voice_id = self.acc_config.get("tts_voice_id", "")
         selected_idx = 0
@@ -381,11 +389,13 @@ class AccessibilityDialog(wx.Dialog):
         lbl_rate = wx.StaticText(self.tts_panel, label=tr["tts_rate_label"])
         tts_sizer.Add(lbl_rate, 0, wx.BOTTOM, 3)
         self.slider_rate = wx.Slider(self.tts_panel, value=self.acc_config.get("tts_rate", 200), minValue=100, maxValue=400, style=wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_rate.SetName("Speech Rate")
         tts_sizer.Add(self.slider_rate, 0, wx.EXPAND | wx.BOTTOM, 10)
 
         lbl_vol = wx.StaticText(self.tts_panel, label=tr["tts_vol_label"])
         tts_sizer.Add(lbl_vol, 0, wx.BOTTOM, 3)
         self.slider_vol = wx.Slider(self.tts_panel, value=self.acc_config.get("tts_volume", 100), minValue=0, maxValue=100, style=wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_vol.SetName("Speech Volume")
         tts_sizer.Add(self.slider_vol, 0, wx.EXPAND | wx.BOTTOM, 5)
 
         self.tts_panel.SetSizer(tts_sizer)
@@ -473,6 +483,8 @@ class PreferencesDialog(wx.Dialog):
         
         self.rb_beginning = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["play_beginning"], style=wx.RB_GROUP)
         self.rb_resume = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["resume_watched"])
+        self.rb_beginning.SetName("Play from beginning")
+        self.rb_resume.SetName("Resume from last position")
         
         if self.resume_enabled:
             self.rb_resume.SetValue(True)
@@ -487,6 +499,7 @@ class PreferencesDialog(wx.Dialog):
         
         self.lang_choices = ["English", "Bahasa Indonesia"]
         self.lang_choice_ctrl = wx.Choice(panel, choices=self.lang_choices)
+        self.lang_choice_ctrl.SetName("Application Language")
         
         if self.current_lang == "id":
             self.lang_choice_ctrl.SetSelection(1)
@@ -504,6 +517,7 @@ class PreferencesDialog(wx.Dialog):
             TRANSLATIONS[current_lang]["theme_oled"]
         ]
         self.theme_choice_ctrl = wx.Choice(panel, choices=self.theme_choices)
+        self.theme_choice_ctrl.SetName("Application Theme")
         
         theme_map = {"dark": 0, "midnight": 1, "oled": 2}
         self.theme_choice_ctrl.SetSelection(theme_map.get(self.current_theme, 0))
@@ -537,7 +551,7 @@ class PlaylistDialog(wx.Dialog):
     def __init__(self, parent, playlist, current_index, current_lang="en"):
         self.current_lang = current_lang
         tr = TRANSLATIONS[current_lang]
-        super().__init__(parent, title=tr["playlist_title"], size=(550, 400))
+        super().__init__(parent, title=tr["playlist_title"], size=(600, 450))
         self.parent_frame = parent
         self.playlist = list(playlist)
         self.current_index = current_index
@@ -549,18 +563,23 @@ class PlaylistDialog(wx.Dialog):
         sizer.Add(lbl, 0, wx.ALL, 10)
         
         self.listbox = wx.ListBox(panel, style=wx.LB_SINGLE)
+        self.listbox.SetName("Playlist Items Listbox")
         self.refresh_list()
         sizer.Add(self.listbox, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
         
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.btn_add = wx.Button(panel, label=tr["playlist_add"])
         self.btn_remove = wx.Button(panel, label=tr["playlist_remove"])
+        self.btn_move_up = wx.Button(panel, label=tr["playlist_move_up"])
+        self.btn_move_down = wx.Button(panel, label=tr["playlist_move_down"])
         self.btn_clear = wx.Button(panel, label=tr["playlist_clear"])
         self.btn_play = wx.Button(panel, label=tr["playlist_play"])
         self.btn_close = wx.Button(panel, wx.ID_CANCEL, tr["close"])
         
         btn_sizer.Add(self.btn_add, 0, wx.RIGHT, 5)
         btn_sizer.Add(self.btn_remove, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_move_up, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_move_down, 0, wx.RIGHT, 5)
         btn_sizer.Add(self.btn_clear, 0, wx.RIGHT, 5)
         btn_sizer.Add(self.btn_play, 0, wx.RIGHT, 5)
         btn_sizer.Add(self.btn_close, 0)
@@ -570,28 +589,58 @@ class PlaylistDialog(wx.Dialog):
         
         self.btn_add.Bind(wx.EVT_BUTTON, self.on_add_files)
         self.btn_remove.Bind(wx.EVT_BUTTON, self.on_remove_item)
+        self.btn_move_up.Bind(wx.EVT_BUTTON, lambda e: self.move_item(-1))
+        self.btn_move_down.Bind(wx.EVT_BUTTON, lambda e: self.move_item(1))
         self.btn_clear.Bind(wx.EVT_BUTTON, self.on_clear_all)
         self.btn_play.Bind(wx.EVT_BUTTON, self.on_play_selected)
+        
         self.listbox.Bind(wx.EVT_LISTBOX_DCLICK, self.on_play_selected)
         self.listbox.Bind(wx.EVT_KEY_DOWN, self.on_list_key)
         
         self.listbox.SetFocus()
         self.CenterOnParent()
 
-    def refresh_list(self):
+    def refresh_list(self, select_idx=None):
         self.listbox.Clear()
         for idx, item in enumerate(self.playlist):
-            name = os.path.basename(item) if not item.startswith(("http://", "https://")) else item
+            name = os.path.basename(item)
             prefix = "[Playing] " if idx == self.current_index else ""
             self.listbox.Append(f"{idx + 1}. {prefix}{name}")
-        if 0 <= self.current_index < len(self.playlist):
+            
+        if select_idx is not None and 0 <= select_idx < len(self.playlist):
+            self.listbox.SetSelection(select_idx)
+        elif 0 <= self.current_index < len(self.playlist):
             self.listbox.SetSelection(self.current_index)
         elif len(self.playlist) > 0:
             self.listbox.SetSelection(0)
 
+    def move_item(self, direction):
+        sel = self.listbox.GetSelection()
+        if sel == wx.NOT_FOUND:
+            return
+            
+        new_sel = sel + direction
+        if 0 <= new_sel < len(self.playlist):
+            item = self.playlist.pop(sel)
+            self.playlist.insert(new_sel, item)
+            
+            if self.current_index == sel:
+                self.current_index = new_sel
+            elif self.current_index == new_sel:
+                self.current_index = sel
+                
+            self.parent_frame.playlist = list(self.playlist)
+            self.parent_frame.playlist_index = self.current_index
+            
+            self.refresh_list(select_idx=new_sel)
+            
+            file_name = os.path.basename(item)
+            announcement = f"Moved {file_name} to position {new_sel + 1} of {len(self.playlist)}"
+            self.parent_frame.speak(announcement)
+
     def on_add_files(self, event):
-        wildcard = "Video Files (*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts)|*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts|All files (*.*)|*.*"
-        dlg = wx.FileDialog(self, "Add Videos to Playlist", wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
+        wildcard = "Media Files (*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts;*.mp3;*.wav;*.flac;*.aac;*.ogg;*.m4a)|*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts;*.mp3;*.wav;*.flac;*.aac;*.ogg;*.m4a|All files (*.*)|*.*"
+        dlg = wx.FileDialog(self, "Add Media to Playlist", wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
             self.playlist.extend(paths)
@@ -631,10 +680,16 @@ class PlaylistDialog(wx.Dialog):
 
     def on_list_key(self, event):
         key = event.GetKeyCode()
+        alt_down = event.AltDown()
+        
         if key == wx.WXK_RETURN:
             self.on_play_selected(None)
         elif key == wx.WXK_DELETE:
             self.on_remove_item(None)
+        elif key == wx.WXK_UP and alt_down:
+            self.move_item(-1)
+        elif key == wx.WXK_DOWN and alt_down:
+            self.move_item(1)
         else:
             event.Skip()
 
@@ -654,13 +709,12 @@ class AsplayerWindow(wx.Frame):
         self.vlc_instance = vlc.Instance(
             "--no-video-title-show",
             "--no-osd",
-            "--network-caching=3000",
             "--no-lua",
             "--quiet"
         )
         self.player = self.vlc_instance.media_player_new()
         
-        self.current_video_path = None
+        self.current_media_path = None
         self.playlist = []
         self.playlist_index = -1
         self.srt_subtitles = None
@@ -717,10 +771,12 @@ class AsplayerWindow(wx.Frame):
 
     def save_config(self):
         try:
-            with open(self.config_file, "w", encoding="utf-8") as f:
+            temp_file = self.config_file + ".tmp"
+            with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(self.config, f, indent=4)
-        except Exception:
-            pass
+            os.replace(temp_file, self.config_file)
+        except Exception as e:
+            print(f"Gagal menyimpan konfigurasi: {e}")
 
     def apply_theme(self):
         theme = self.config.get("theme", "dark")
@@ -736,21 +792,21 @@ class AsplayerWindow(wx.Frame):
             self.video_panel.Refresh()
 
     def record_current_position(self):
-        if self.current_video_path and not self.current_video_path.startswith(("http://", "https://")) and self.player:
+        if self.current_media_path and os.path.exists(self.current_media_path) and self.player:
             current_ms = self.player.get_time()
             total_ms = self.player.get_length()
             if current_ms > 3000 and (total_ms <= 0 or (total_ms - current_ms) > 5000):
-                self.config["positions"][self.current_video_path] = current_ms
+                self.config["positions"][self.current_media_path] = current_ms
             elif total_ms > 0 and (total_ms - current_ms) <= 5000:
-                self.config["positions"].pop(self.current_video_path, None)
+                self.config["positions"].pop(self.current_media_path, None)
             self.save_config()
 
     def save_current_subtitle_settings(self):
-        if self.current_video_path and not self.current_video_path.startswith(("http://", "https://")):
+        if self.current_media_path and os.path.exists(self.current_media_path):
             if "subtitles" not in self.config:
                 self.config["subtitles"] = {}
             serialized_per_line = {str(k): v for k, v in self.per_line_offsets.items()}
-            self.config["subtitles"][self.current_video_path] = {
+            self.config["subtitles"][self.current_media_path] = {
                 "offset_ms": self.sub_offset_ms,
                 "enabled": self.sub_enabled,
                 "position": self.sub_position,
@@ -759,7 +815,7 @@ class AsplayerWindow(wx.Frame):
             }
             self.save_config()
 
-    def load_video_subtitle_settings(self, path):
+    def load_media_subtitle_settings(self, path):
         sub_cfg = self.config.get("subtitles", {}).get(path, {})
         self.sub_offset_ms = sub_cfg.get("offset_ms", 0)
         self.sub_enabled = sub_cfg.get("enabled", True)
@@ -777,7 +833,7 @@ class AsplayerWindow(wx.Frame):
         
         self.video_panel = wx.Panel(panel)
         self.video_panel.SetBackgroundColour(wx.BLACK)
-        self.video_panel.SetName("Video Viewport")
+        self.video_panel.SetName("Media Viewport")
         self.video_panel.SetCanFocus(False)
         panel.SetFocus()
         
@@ -791,17 +847,15 @@ class AsplayerWindow(wx.Frame):
         file_menu = wx.Menu()
         open_submenu = wx.Menu()
         
-        self.ID_OPEN_VIDEO = wx.NewIdRef()
+        self.ID_OPEN_MEDIA = wx.NewIdRef()
         self.ID_OPEN_FOLDER = wx.NewIdRef()
-        self.ID_OPEN_URL = wx.NewIdRef()
         self.ID_OPEN_SUB = wx.NewIdRef()
         self.ID_PLAYLIST = wx.NewIdRef()
         self.ID_MEDIA_INFO = wx.NewIdRef()
         self.ID_EXIT = wx.NewIdRef()
         
-        open_submenu.Append(self.ID_OPEN_VIDEO, self.tr("open_file"))
+        open_submenu.Append(self.ID_OPEN_MEDIA, self.tr("open_file"))
         open_submenu.Append(self.ID_OPEN_FOLDER, self.tr("open_folder"))
-        open_submenu.Append(self.ID_OPEN_URL, self.tr("open_url"))
         
         file_menu.AppendSubMenu(open_submenu, self.tr("menu_open"))
         file_menu.Append(self.ID_OPEN_SUB, self.tr("open_sub"))
@@ -941,9 +995,8 @@ class AsplayerWindow(wx.Frame):
         self.SetMenuBar(menubar)
         
         # Event Bindings
-        self.Bind(wx.EVT_MENU, self.on_open_video_dialog, id=self.ID_OPEN_VIDEO)
+        self.Bind(wx.EVT_MENU, self.on_open_media_dialog, id=self.ID_OPEN_MEDIA)
         self.Bind(wx.EVT_MENU, self.on_open_folder_dialog, id=self.ID_OPEN_FOLDER)
-        self.Bind(wx.EVT_MENU, self.on_open_url_dialog, id=self.ID_OPEN_URL)
         self.Bind(wx.EVT_MENU, self.on_open_sub_dialog, id=self.ID_OPEN_SUB)
         self.Bind(wx.EVT_MENU, self.on_open_playlist_dialog, id=self.ID_PLAYLIST)
         self.Bind(wx.EVT_MENU, self.on_announce_status, id=self.ID_MEDIA_INFO)
@@ -1007,9 +1060,8 @@ class AsplayerWindow(wx.Frame):
             wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('i'), self.ID_MEDIA_INFO),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_PAGEDOWN, self.ID_PB_NEXT),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_PAGEUP, self.ID_PB_PREV),
-            wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('o'), self.ID_OPEN_VIDEO),
+            wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('o'), self.ID_OPEN_MEDIA),
             wx.AcceleratorEntry(wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('o'), self.ID_OPEN_FOLDER),
-            wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('u'), self.ID_OPEN_URL),
             wx.AcceleratorEntry(wx.ACCEL_CTRL, ord('l'), self.ID_PLAYLIST),
             wx.AcceleratorEntry(wx.ACCEL_ALT, ord('o'), self.ID_OPEN_SUB),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_F11, self.ID_FS_KEEP_AR),
@@ -1046,9 +1098,9 @@ class AsplayerWindow(wx.Frame):
                 except Exception:
                     pass
 
-    def on_open_video_dialog(self, event):
-        wildcard = "Video Files (*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts)|*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts|All files (*.*)|*.*"
-        dlg = wx.FileDialog(self, "Open Video File(s)", wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
+    def on_open_media_dialog(self, event):
+        wildcard = "Media Files (*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts;*.mp3;*.wav;*.flac;*.aac;*.ogg;*.m4a)|*.mp4;*.mkv;*.avi;*.mov;*.webm;*.ts;*.mp3;*.wav;*.flac;*.aac;*.ogg;*.m4a|All files (*.*)|*.*"
+        dlg = wx.FileDialog(self, "Open Media File(s)", wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
             self.playlist = list(paths)
@@ -1056,35 +1108,26 @@ class AsplayerWindow(wx.Frame):
         dlg.Destroy()
 
     def on_open_folder_dialog(self, event):
-        dlg = wx.DirDialog(self, "Select Folder Containing Videos", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
+        dlg = wx.DirDialog(self, "Select Folder Containing Media", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
         if dlg.ShowModal() == wx.ID_OK:
             folder_path = dlg.GetPath()
-            found_videos = []
+            found_media = []
             try:
                 for entry in sorted(os.listdir(folder_path)):
                     full_path = os.path.join(folder_path, entry)
-                    if os.path.isfile(full_path) and entry.lower().endswith(VIDEO_EXTENSIONS):
-                        found_videos.append(full_path)
+                    if os.path.isfile(full_path) and entry.lower().endswith(MEDIA_EXTENSIONS):
+                        found_media.append(full_path)
             except Exception as e:
                 self.speak(f"Error reading folder: {e}")
                 dlg.Destroy()
                 return
 
-            if found_videos:
-                self.playlist = found_videos
-                self.speak(f"Found {len(found_videos)} videos in folder")
+            if found_media:
+                self.playlist = found_media
+                self.speak(f"Found {len(found_media)} media files in folder")
                 self.play_playlist_index(0)
             else:
-                self.speak("No supported video files found in the selected folder")
-        dlg.Destroy()
-
-    def on_open_url_dialog(self, event):
-        dlg = wx.TextEntryDialog(self, "Enter video stream URL:", "Open URL - ASPlayer")
-        if dlg.ShowModal() == wx.ID_OK:
-            url = dlg.GetValue().strip()
-            if url:
-                self.playlist = [url]
-                self.play_playlist_index(0)
+                self.speak("No supported media files found in the selected folder")
         dlg.Destroy()
 
     def on_open_playlist_dialog(self, event):
@@ -1095,7 +1138,7 @@ class AsplayerWindow(wx.Frame):
 
     def format_duration(self, ms):
         if ms <= 0:
-            return "Unknown / Live Stream"
+            return "Unknown"
         total_sec = ms // 1000
         hours, remainder = divmod(total_sec, 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -1107,51 +1150,58 @@ class AsplayerWindow(wx.Frame):
         if 0 <= index < len(self.playlist):
             self.playlist_index = index
             path = self.playlist[index]
-            self.load_video(path)
+            self.load_media(path)
 
-    def load_video(self, path):
-        self.record_current_position()
-        
-        self.current_video_path = path
-        self.was_playing = False
-        
-        self.load_video_subtitle_settings(path)
-        self.menu_sub_toggle_item.Check(self.sub_enabled)
-        
-        self.player.set_hwnd(self.video_panel.GetHandle())
-        
-        media = self.vlc_instance.media_new(path)
-        self.player.set_media(media)
-        self.player.play()
-        
-        wx.CallAfter(self.SetFocus)
-        
-        is_url = path.startswith(("http://", "https://"))
-        display_name = path if is_url else os.path.basename(path)
-        self.SetTitle(f"{display_name} - ASPlayer")
-        
-        playlist_info = ""
-        if len(self.playlist) > 1:
-            playlist_info = f"Item {self.playlist_index + 1} of {len(self.playlist)}: "
+    def load_media(self, path):
+        try:
+            self.record_current_position()
             
-        saved_pos = 0 if is_url else self.config.get("positions", {}).get(path, 0)
-        if self.config.get("resume_playback", True) and saved_pos > 0:
-            self.pending_seek_time = saved_pos
-            sec = saved_pos // 1000
-            mins, secs = divmod(sec, 60)
-            self.speak(f"{playlist_info}Resuming {display_name} from {mins} minutes {secs} seconds")
-        else:
-            self.pending_seek_time = 0
-            self.speak(f"{playlist_info}Playing {display_name}")
-            
-        if not is_url:
-            self.check_and_load_matching_srt(path)
-        else:
-            self.srt_subtitles = None
-            self.current_sub_index = -1
+            if not os.path.exists(path):
+                self.speak("Berkas media tidak ditemukan.")
+                return
 
-    def check_and_load_matching_srt(self, video_path):
-        folder_dir, file_name = os.path.split(video_path)
+            self.current_media_path = path
+            self.was_playing = False
+            
+            self.load_media_subtitle_settings(path)
+            self.menu_sub_toggle_item.Check(self.sub_enabled)
+            
+            self.player.set_hwnd(self.video_panel.GetHandle())
+            
+            media = self.vlc_instance.media_new(path)
+            self.player.set_media(media)
+            self.player.play()
+            
+            wx.CallAfter(self.SetFocus)
+            
+            display_name = os.path.basename(path)
+            self.SetTitle(f"{display_name} - ASPlayer")
+            
+            playlist_info = ""
+            if len(self.playlist) > 1:
+                playlist_info = f"Item {self.playlist_index + 1} of {len(self.playlist)}: "
+                
+            saved_pos = self.config.get("positions", {}).get(path, 0)
+            if self.config.get("resume_playback", True) and saved_pos > 0:
+                self.pending_seek_time = saved_pos
+                sec = saved_pos // 1000
+                mins, secs = divmod(sec, 60)
+                self.speak(f"{playlist_info}Resuming {display_name} from {mins} minutes {secs} seconds")
+            else:
+                self.pending_seek_time = 0
+                self.speak(f"{playlist_info}Playing {display_name}")
+                
+            if not path.lower().endswith(AUDIO_EXTENSIONS):
+                self.check_and_load_matching_srt(path)
+            else:
+                self.srt_subtitles = None
+                self.current_sub_index = -1
+        except Exception as e:
+            self.speak("Terjadi kesalahan saat memuat berkas media.")
+            print(f"Error load_media: {e}")
+
+    def check_and_load_matching_srt(self, media_path):
+        folder_dir, file_name = os.path.split(media_path)
         base_name, _ = os.path.splitext(file_name)
         srt_path = os.path.join(folder_dir, base_name + ".srt")
         
@@ -1236,7 +1286,7 @@ class AsplayerWindow(wx.Frame):
         self.sub_offset_ms = 0
         self.per_line_offsets.clear()
         self.save_current_subtitle_settings()
-        self.speak("Subtitle sync reset to default for this video")
+        self.speak("Subtitle sync reset to default for this media")
 
     def set_subtitle_position(self, pos):
         self.sub_position = pos
@@ -1246,7 +1296,7 @@ class AsplayerWindow(wx.Frame):
 
     def on_announce_status(self, event):
         current_lang = self.config.get("language", "en")
-        if not self.current_video_path:
+        if not self.current_media_path:
             msg = self.tr("no_media")
             self.speak(msg)
             dlg = MediaInfoDialog(self, msg, current_lang=current_lang)
@@ -1260,9 +1310,9 @@ class AsplayerWindow(wx.Frame):
         tot_str = self.format_duration(total_ms)
         state_str = self.tr("playing") if self.player.is_playing() else self.tr("paused")
         vol = self.player.audio_get_volume()
-        file_name = os.path.basename(self.current_video_path)
+        file_name = os.path.basename(self.current_media_path)
         width, height = self.player.video_get_size(0)
-        res_str = f"{width}x{height}" if width > 0 and height > 0 else "Audio Only / Unknown"
+        res_str = f"{width}x{height}" if width > 0 and height > 0 else "Audio Only"
         
         bitrate_kbps = 0
         try:
@@ -1274,8 +1324,8 @@ class AsplayerWindow(wx.Frame):
             
         if bitrate_kbps <= 0:
             try:
-                if not self.current_video_path.startswith(("http://", "https://")) and os.path.exists(self.current_video_path) and total_ms > 0:
-                    file_size_bits = os.path.getsize(self.current_video_path) * 8
+                if os.path.exists(self.current_media_path) and total_ms > 0:
+                    file_size_bits = os.path.getsize(self.current_media_path) * 8
                     duration_sec = total_ms / 1000.0
                     bitrate_kbps = int((file_size_bits / duration_sec) / 1000)
             except Exception:
@@ -1289,10 +1339,10 @@ class AsplayerWindow(wx.Frame):
 
         detail_text = (
             f"File Name  : {file_name}\n"
-            f"Full Path  : {self.current_video_path}\n"
+            f"Full Path  : {self.current_media_path}\n"
             f"Status     : {state_str}\n"
             f"Position   : {cur_str} / {tot_str}\n"
-            f"Video Size : {res_str}\n"
+            f"Media Type : {res_str}\n"
             f"Bitrate    : {bitrate_str}\n"
             f"Volume     : {vol}%\n"
             f"Subtitle   : {sub_status}\n"
@@ -1373,9 +1423,8 @@ class AsplayerWindow(wx.Frame):
     def on_show_context_menu(self, event):
         menu = wx.Menu()
         open_sub = wx.Menu()
-        item_open_vid = open_sub.Append(wx.ID_ANY, self.tr("open_file"))
+        item_open_media = open_sub.Append(wx.ID_ANY, self.tr("open_file"))
         item_open_folder = open_sub.Append(wx.ID_ANY, self.tr("open_folder"))
-        item_open_url = open_sub.Append(wx.ID_ANY, self.tr("open_url"))
         menu.AppendSubMenu(open_sub, self.tr("menu_open"))
         
         item_open_sub = menu.Append(wx.ID_ANY, self.tr("open_sub"))
@@ -1388,9 +1437,8 @@ class AsplayerWindow(wx.Frame):
         menu.AppendSeparator()
         item_fs = menu.Append(wx.ID_ANY, self.tr("fs_keep_ar"))
         
-        self.Bind(wx.EVT_MENU, self.on_open_video_dialog, item_open_vid)
+        self.Bind(wx.EVT_MENU, self.on_open_media_dialog, item_open_media)
         self.Bind(wx.EVT_MENU, self.on_open_folder_dialog, item_open_folder)
-        self.Bind(wx.EVT_MENU, self.on_open_url_dialog, item_open_url)
         self.Bind(wx.EVT_MENU, self.on_open_sub_dialog, item_open_sub)
         self.Bind(wx.EVT_MENU, self.on_open_playlist_dialog, item_playlist)
         self.Bind(wx.EVT_MENU, self.on_announce_status, item_media_info)

@@ -698,7 +698,11 @@ class AsplayerWindow(wx.Frame):
     def __init__(self):
         super().__init__(None, title="ASPlayer", size=(900, 600))
         
-        self.config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "asplayer_config.json")
+        # PEMBARUAN PATH: Simpan konfigurasi di folder AppData\Roaming\ASPlayer agar aman dari pembatasan izin Windows
+        appdata_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "ASPlayer")
+        os.makedirs(appdata_dir, exist_ok=True)
+        self.config_file = os.path.join(appdata_dir, "asplayer_config.json")
+        
         self.config = self.load_config()
         
         try:

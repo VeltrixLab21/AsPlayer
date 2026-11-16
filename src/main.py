@@ -1560,9 +1560,11 @@ class AsplayerWindow(wx.Frame):
         self.speak(f"Volume {vol} percent")
 
     def on_toggle_mute(self, event):
-        self.player.audio_toggle_mute()
-        is_muted = self.player.audio_get_mute()
-        if is_muted:
+        currently_muted = bool(self.player.audio_get_mute())
+        new_mute_state = not currently_muted
+        self.player.audio_set_mute(new_mute_state)
+        
+        if new_mute_state:
             self.speak("Muted")
         else:
             vol = self.player.audio_get_volume()

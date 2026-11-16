@@ -112,25 +112,25 @@ TRANSLATIONS = {
         )
     },
     "id": {
-        "menu_file": "&Berkas",
-        "menu_open": "&Buka",
+        "menu_file": "Berkas (&F)",
+        "menu_open": "Buka (&O)",
         "open_file": "Buka Berkas Media...\tCtrl+O",
         "open_folder": "Buka Folder...\tCtrl+Shift+O",
         "open_sub": "Buka Subtitle (.srt)...\tAlt+O",
         "playlist_mgr": "Pengelola Daftar Putar...\tCtrl+L",
         "media_info": "Informasi Media...\tCtrl+I",
         "exit": "Keluar\tAlt+F4",
-        "menu_view": "&Tampilan",
+        "menu_view": "Tampilan (&V)",
         "fs_keep_ar": "Layar Penuh (Rasio Asli)\tF11",
         "fs_stretch": "Layar Penuh (Penuh)\tCtrl+Enter",
-        "menu_playback": "&Pemutaran",
+        "menu_playback": "Pemutaran (&P)",
         "play_pause": "Putar / Jeda\tSpace",
         "stop": "Berhenti\tCtrl+S",
         "rew_5s": "Mundur 5 Detik\tLeft",
         "fwd_5s": "Maju 5 Detik\tRight",
         "next_item": "Item Berikutnya\tPage Down",
         "prev_item": "Item Sebelumnya\tPage Up",
-        "jump_to": "&Lompat Ke",
+        "jump_to": "Lompat Ke (&J)",
         "jump_rew_30s": "Mundur 30 Detik\tCtrl+Left",
         "jump_fwd_30s": "Maju 30 Detik\tCtrl+Right",
         "jump_rew_1m": "Mundur 1 Menit\tShift+Left",
@@ -142,7 +142,7 @@ TRANSLATIONS = {
         "vol_down": "Turunkan Volume\tDown",
         "vol_mute": "Bisukan / Bunyikan\tM",
         "resume_pos": "Lanjutkan dari Posisi Terakhir",
-        "menu_tools": "&Alat",
+        "menu_tools": "Alat (&T)",
         "sub_menu": "Menu Subtitle",
         "sub_toggle": "Tampilkan / Sembunyikan Subtitle",
         "sub_appearance": "Pengaturan Tampilan Subtitle...",
@@ -170,7 +170,7 @@ TRANSLATIONS = {
         "tts_voice_label": "Pilihan Suara TTS:",
         "tts_rate_label": "Kecepatan Bicara:",
         "tts_vol_label": "Volume Suara (%):",
-        "tts_test_btn": "&Uji Suara",
+        "tts_test_btn": "Uji Suara (&T)",
         "tts_test_phrase": "Ini adalah pengujian pengaturan suara subtitle ASPlayer.",
         "preferences": "Preferensi...\tCtrl+Shift+P",
         "about_menu": "Tentang ASPlayer...",
@@ -195,12 +195,12 @@ TRANSLATIONS = {
         "close": "Tutup",
         "playlist_title": "Pengelola Daftar Putar - ASPlayer",
         "playlist_lbl": "Item Daftar Putar (Tekan Enter untuk memutar, Alt+Atas/Bawah untuk ubah urutan):",
-        "playlist_add": "&Tambah Berkas...",
-        "playlist_remove": "&Hapus Terpilih",
-        "playlist_move_up": "Geser &Naik (Alt+Atas)",
-        "playlist_move_down": "Geser &Turun (Alt+Bawah)",
-        "playlist_clear": "&Bersihkan Semua",
-        "playlist_play": "&Putar Terpilih",
+        "playlist_add": "Tambah Berkas (&A)...",
+        "playlist_remove": "Hapus Terpilih (&R)",
+        "playlist_move_up": "Geser Naik (&U) (Alt+Atas)",
+        "playlist_move_down": "Geser Turun (&D) (Alt+Bawah)",
+        "playlist_clear": "Bersihkan Semua (&C)",
+        "playlist_play": "Putar Terpilih (&P)",
         "about_content": (
             "ASPlayer v1.0\n"
             "Pemutar Multimedia & Audio Profesional\n\n"
@@ -327,7 +327,7 @@ class AboutDialog(wx.Dialog):
         sizer.Add(btn_ok, 0, wx.ALIGN_CENTER | wx.BOTTOM, 15)
 
         panel.SetSizer(sizer)
-        btn_ok.SetFocus()
+        self.txt_about.SetFocus()
         self.CenterOnParent()
 
 
@@ -711,6 +711,7 @@ class AsplayerWindow(wx.Frame):
             self.speech = None
             
         self.vlc_instance = vlc.Instance(
+            "--no-xlib",
             "--no-video-title-show",
             "--no-osd",
             "--no-lua",
@@ -839,6 +840,9 @@ class AsplayerWindow(wx.Frame):
         self.video_panel.SetBackgroundColour(wx.BLACK)
         self.video_panel.SetName("Media Viewport")
         self.video_panel.SetCanFocus(False)
+        self.video_panel.Bind(wx.EVT_SET_FOCUS, lambda e: self.SetFocus())
+        self.video_panel.Bind(wx.EVT_KEY_DOWN, self.on_prevent_vlc_key_leak)
+        panel.Bind(wx.EVT_KEY_DOWN, self.on_prevent_vlc_key_leak)
         panel.SetFocus()
         
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -1072,6 +1076,13 @@ class AsplayerWindow(wx.Frame):
             wx.AcceleratorEntry(wx.ACCEL_CTRL, wx.WXK_RETURN, self.ID_FS_STRETCH),
         ]
         self.SetAcceleratorTable(wx.AcceleratorTable(accel_entries))
+
+    def on_prevent_vlc_key_leak(self, event):
+        if self.FindFocus() == self.video_panel:
+            self.SetFocus()
+        if event.ControlDown() and event.GetKeyCode() in (wx.WXK_UP, wx.WXK_DOWN):
+            return
+        event.Skip()
 
     def init_timer(self):
         self.timer = wx.Timer(self)

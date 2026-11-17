@@ -49,12 +49,12 @@ TRANSLATIONS = {
         "sub_toggle": "Show / Hide Subtitle",
         "sub_appearance": "Subtitle Appearance Settings...",
         "sub_sync_menu": "Subtitle Sync Menu",
-        "sub_inc_05": "Increase subtitle 0.5 second\t>",
-        "sub_dec_05": "Decrease subtitle 0.5 second\t<",
-        "sub_inc_5": "Increase subtitle 5 second\tCtrl+>",
-        "sub_dec_5": "Decrease subtitle 5 second\tCtrl+<",
-        "sub_inc_50": "Increase subtitle 50 second\tShift+>",
-        "sub_dec_50": "Decrease subtitle 50 second\tShift+<",
+        "sub_inc_05": "Accelerate subtitle 0.5 second\t>",
+        "sub_dec_05": "Delay subtitle 0.5 second\t<",
+        "sub_inc_5": "Accelerate subtitle 5 second\tCtrl+>",
+        "sub_dec_5": "Delay subtitle 5 second\tCtrl+<",
+        "sub_inc_50": "Accelerate subtitle 50 second\tShift+>",
+        "sub_dec_50": "Delay subtitle 50 second\tShift+<",
         "sub_apply_current": "Apply to current line only",
         "sub_reset": "Reset Subtitle Sync to Default",
         "sub_pos_bottom": "Position: Bottom",
@@ -147,11 +147,11 @@ TRANSLATIONS = {
         "sub_toggle": "Tampilkan / Sembunyikan Subtitle",
         "sub_appearance": "Pengaturan Tampilan Subtitle...",
         "sub_sync_menu": "Sinkronisasi Subtitle",
-        "sub_inc_05": "Majukan subtitle 0,5 detik\t>",
-        "sub_dec_05": "Mundurkan subtitle 0,5 detik\t<",
-        "sub_inc_5": "Majukan subtitle 5 detik\tCtrl+>",
+        "sub_inc_05": "Percepat subtitle 0,5 detik (>)\t>",
+        "sub_dec_05": "Mundurkan subtitle 0,5 detik (<)\t<",
+        "sub_inc_5": "Percepat subtitle 5 detik\tCtrl+>",
         "sub_dec_5": "Mundurkan subtitle 5 detik\tCtrl+<",
-        "sub_inc_50": "Majukan subtitle 50 detik\tShift+>",
+        "sub_inc_50": "Percepat subtitle 50 detik\tShift+>",
         "sub_dec_50": "Mundurkan subtitle 50 detik\tShift+<",
         "sub_apply_current": "Terapkan hanya pada baris saat ini",
         "sub_reset": "Atur Ulang Sinkronisasi Subtitle",
@@ -698,7 +698,6 @@ class AsplayerWindow(wx.Frame):
     def __init__(self):
         super().__init__(None, title="ASPlayer", size=(900, 600))
         
-        # PEMBARUAN PATH: Simpan konfigurasi di folder AppData\Roaming\ASPlayer agar aman dari pembatasan izin Windows
         appdata_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "ASPlayer")
         os.makedirs(appdata_dir, exist_ok=True)
         self.config_file = os.path.join(appdata_dir, "asplayer_config.json")
@@ -1031,12 +1030,15 @@ class AsplayerWindow(wx.Frame):
         
         self.Bind(wx.EVT_MENU, self.on_toggle_subtitle_visibility, id=self.ID_SUB_TOGGLE)
         self.Bind(wx.EVT_MENU, self.on_open_subtitle_appearance, id=self.ID_SUB_APPEARANCE)
+        
+        # Logika Sinkronisasi Subtitle Dibalik: > mempercepat (tambah), < memundurkan (kurang)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(500), id=self.ID_SUB_INC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(-500), id=self.ID_SUB_DEC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(5000), id=self.ID_SUB_INC_5)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(-5000), id=self.ID_SUB_DEC_5)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(50000), id=self.ID_SUB_INC_50)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(-50000), id=self.ID_SUB_DEC_50)
+        
         self.Bind(wx.EVT_MENU, self.on_reset_subtitle_sync, id=self.ID_SUB_RESET_SYNC)
         self.Bind(wx.EVT_MENU, lambda e: self.set_subtitle_position(0), id=self.ID_SUB_POS_BOTTOM)
         self.Bind(wx.EVT_MENU, lambda e: self.set_subtitle_position(1), id=self.ID_SUB_POS_TOP)
@@ -1550,7 +1552,8 @@ class AsplayerWindow(wx.Frame):
             self.speak("No previous item in playlist")
 
     def on_volume_up(self, event):
-        vol = min(100, self.player.audio_get_volume() + 5)
+        # Batas maksimum volume ditingkatkan hingga 200% agar suara lebih maksimal/lantang
+        vol = min(200, self.player.audio_get_volume() + 5)
         self.player.audio_set_volume(vol)
         self.speak(f"Volume {vol} percent")
 

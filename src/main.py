@@ -283,7 +283,7 @@ class MediaInfoDialog(wx.Dialog):
     def __init__(self, parent, info_text, current_lang="en"):
         title = TRANSLATIONS[current_lang]["media_info_title"]
         close_lbl = TRANSLATIONS[current_lang]["close"]
-        super().__init__(parent, title=title, size=(480, 350))
+        super().__init__(parent, title=title, size=(480, 360))
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -1031,7 +1031,6 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_toggle_subtitle_visibility, id=self.ID_SUB_TOGGLE)
         self.Bind(wx.EVT_MENU, self.on_open_subtitle_appearance, id=self.ID_SUB_APPEARANCE)
         
-        # Logika Sinkronisasi Subtitle Dibalik: > mempercepat (tambah), < memundurkan (kurang)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(500), id=self.ID_SUB_INC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(-500), id=self.ID_SUB_DEC_05)
         self.Bind(wx.EVT_MENU, lambda e: self.adjust_subtitle_sync(5000), id=self.ID_SUB_INC_5)
@@ -1284,7 +1283,7 @@ class AsplayerWindow(wx.Frame):
         dlg.Destroy()
 
     def adjust_subtitle_sync(self, delta_ms):
-        apply_current_only = self.menu_apply_current_item.IsChecked()
+        apply_current_only = self.menu_apply_current_item.IsCheck()
         
         if apply_current_only and self.current_sub_index != -1:
             current_line_offset = self.per_line_offsets.get(self.current_sub_index, 0)
@@ -1328,23 +1327,33 @@ class AsplayerWindow(wx.Frame):
         state_str = self.tr("playing") if self.player.is_playing() else self.tr("paused")
         vol = self.player.audio_get_volume()
         file_name = os.path.basename(self.current_media_path)
-        width, height = self.player.video_get_size(0)
-        res_str = f"{width}x{height}" if width > 0 and height > 0 else "Audio Only"
         
+        # Pengambilan ukuran video dengan presisi tinggi dari track asli video (index 0)
+        width, height = 0, 0
+        try:
+            width, height = self.player.video_get_size(0)
+        except Exception:
+            pass
+        res_str = f"{width}x{height} pixels" if width > 0 and height > 0 else "Audio Only / Unknown"
+        
+        # Pengambilan bitrate yang disempurnakan (menggunakan statistik VLC media atau ukuran file & durasi)
         bitrate_kbps = 0
         try:
-            stats = self.player.get_media().get_stats()
-            if stats and hasattr(stats, 'input_bitrate'):
-                bitrate_kbps = int(stats.input_bitrate * 8 * 1024)
+            media_obj = self.player.get_media()
+            if media_obj:
+                stats = media_obj.get_stats()
+                if stats and hasattr(stats, 'input_bitrate') and stats.input_bitrate > 0:
+                    bitrate_kbps = int(stats.input_bitrate * 8 * 1024)
         except Exception:
             pass
             
         if bitrate_kbps <= 0:
             try:
                 if os.path.exists(self.current_media_path) and total_ms > 0:
-                    file_size_bits = os.path.getsize(self.current_media_path) * 8
+                    file_size_bytes = os.path.getsize(self.current_media_path)
                     duration_sec = total_ms / 1000.0
-                    bitrate_kbps = int((file_size_bits / duration_sec) / 1000)
+                    # Menggunakan perhitungan presisi byte ke kilobit per detik (kbps)
+                    bitrate_kbps = int((file_size_bytes * 8) / (duration_sec * 1000))
             except Exception:
                 pass
 
@@ -1359,7 +1368,8 @@ class AsplayerWindow(wx.Frame):
             f"Full Path  : {self.current_media_path}\n"
             f"Status     : {state_str}\n"
             f"Position   : {cur_str} / {tot_str}\n"
-            f"Media Type : {res_str}\n"
+            f"Length     : {tot_str}\n"
+            f"Video Size : {res_str}\n"
             f"Bitrate    : {bitrate_str}\n"
             f"Volume     : {vol}%\n"
             f"Subtitle   : {sub_status}\n"
@@ -1428,14 +1438,23 @@ class AsplayerWindow(wx.Frame):
     def on_fullscreen_keep_ar(self, event):
         is_fs = self.IsFullScreen()
         self.ShowFullScreen(not is_fs)
-        self.player.video_set_scale(0)
-        self.speak("Fullscreen keep aspect ratio enabled" if not is_fs else "Windowed mode restored")
+        if not is_fs:
+            self.player.video_set_aspect_ratio(None)
+            self.player.video_set_scale(0)
+            self.speak("Fullscreen keep aspect ratio enabled")
+        else:
+            self.speak("Windowed mode restored")
 
     def on_fullscreen_stretch(self, event):
         is_fs = self.IsFullScreen()
         self.ShowFullScreen(not is_fs)
-        self.player.video_set_scale(1)
-        self.speak("Fullscreen stretched enabled" if not is_fs else "Windowed mode restored")
+        if not is_fs:
+            self.player.video_set_scale(0)
+            self.player.video_set_aspect_ratio("fit")
+            self.speak("Fullscreen stretched enabled")
+        else:
+            self.player.video_set_aspect_ratio(None)
+            self.speak("Windowed mode restored")
 
     def on_show_context_menu(self, event):
         menu = wx.Menu()
@@ -1552,7 +1571,6 @@ class AsplayerWindow(wx.Frame):
             self.speak("No previous item in playlist")
 
     def on_volume_up(self, event):
-        # Batas maksimum volume ditingkatkan hingga 200% agar suara lebih maksimal/lantang
         vol = min(200, self.player.audio_get_volume() + 5)
         self.player.audio_set_volume(vol)
         self.speak(f"Volume {vol} percent")

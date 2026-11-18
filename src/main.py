@@ -30,6 +30,7 @@ TRANSLATIONS = {
         "stop": "Stop\tCtrl+S",
         "rew_5s": "Rewind 5 Seconds\tLeft",
         "fwd_5s": "Fast Forward 5 Seconds\tRight",
+        "play_beginning": "Play from Beginning\tW",
         "next_item": "Play Next Item\tPage Down",
         "prev_item": "Play Previous Item\tPage Up",
         "jump_to": "&Jump To",
@@ -43,7 +44,7 @@ TRANSLATIONS = {
         "vol_up": "Volume Up\tUp",
         "vol_down": "Volume Down\tDown",
         "vol_mute": "Mute / Unmute\tM",
-        "resume_pos": "Resume from Last Position",
+        "resume_pos_toggle": "Resume from Last Position",
         "menu_tools": "&Tools",
         "sub_menu": "Subtitle Menu",
         "sub_toggle": "Show / Hide Subtitle",
@@ -86,7 +87,7 @@ TRANSLATIONS = {
         "prefs_title": "Preferences - ASPlayer",
         "prefs_saved": "Preferences saved. Some changes will fully apply on next restart.",
         "startup_behavior": "Startup Playback Behavior:",
-        "play_beginning": "Always play from beginning",
+        "play_beginning_pref": "Always play from beginning",
         "resume_watched": "Resume from last watched position",
         "app_language": "Application Language:",
         "app_theme": "Application Theme:",
@@ -103,7 +104,7 @@ TRANSLATIONS = {
         "playlist_move_up": "Move &Up (Alt+Up)",
         "playlist_move_down": "Move &Down (Alt+Down)",
         "playlist_clear": "&Clear All",
-        "playlist_play": "&Play Selected",
+        "playlist_play": "&Play Selected (Alt+P)",
         "about_content": (
             "ASPlayer v1.0\n"
             "Professional Multimedia & Audio Player\n\n"
@@ -130,6 +131,7 @@ TRANSLATIONS = {
         "stop": "Berhenti\tCtrl+S",
         "rew_5s": "Mundur 5 Detik\tLeft",
         "fwd_5s": "Maju 5 Detik\tRight",
+        "play_beginning": "Putar dari Awal\tW",
         "next_item": "Item Berikutnya\tPage Down",
         "prev_item": "Item Sebelumnya\tPage Up",
         "jump_to": "Lompat Ke (&J)",
@@ -143,7 +145,7 @@ TRANSLATIONS = {
         "vol_up": "Naikkan Volume\tUp",
         "vol_down": "Turunkan Volume\tDown",
         "vol_mute": "Bisukan / Bunyikan\tM",
-        "resume_pos": "Lanjutkan dari Posisi Terakhir",
+        "resume_pos_toggle": "Lanjutkan dari Posisi Terakhir",
         "menu_tools": "Alat (&T)",
         "sub_menu": "Menu Subtitle",
         "sub_toggle": "Tampilkan / Sembunyikan Subtitle",
@@ -186,7 +188,7 @@ TRANSLATIONS = {
         "prefs_title": "Preferensi - ASPlayer",
         "prefs_saved": "Preferensi disimpan. Beberapa perubahan akan diterapkan sepenuhnya setelah restart.",
         "startup_behavior": "Perilaku Pemutaran Saat Awal:",
-        "play_beginning": "Selalu putar dari awal",
+        "play_beginning_pref": "Selalu putar dari awal",
         "resume_watched": "Lanjutkan dari posisi terakhir ditonton",
         "app_language": "Bahasa Aplikasi:",
         "app_theme": "Tema Aplikasi:",
@@ -485,7 +487,7 @@ class PreferencesDialog(wx.Dialog):
         self.lbl_resume_heading = wx.StaticText(panel, label=TRANSLATIONS[current_lang]["startup_behavior"])
         sizer.Add(self.lbl_resume_heading, 0, wx.ALL, 10)
         
-        self.rb_beginning = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["play_beginning"], style=wx.RB_GROUP)
+        self.rb_beginning = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["play_beginning_pref"], style=wx.RB_GROUP)
         self.rb_resume = wx.RadioButton(panel, label=TRANSLATIONS[current_lang]["resume_watched"])
         self.rb_beginning.SetName("Play from beginning")
         self.rb_resume.SetName("Resume from last position")
@@ -890,14 +892,17 @@ class AsplayerWindow(wx.Frame):
         self.ID_PB_STOP = wx.NewIdRef()
         self.ID_PB_REWIND = wx.NewIdRef()
         self.ID_PB_FORWARD = wx.NewIdRef()
+        self.ID_PB_BEGINNING = wx.NewIdRef()
         self.ID_PB_NEXT = wx.NewIdRef()
         self.ID_PB_PREV = wx.NewIdRef()
         self.ID_PB_TOGGLE_RESUME = wx.NewIdRef()
         
         playback_menu.Append(self.ID_PB_PLAYPAUSE, self.tr("play_pause"))
         playback_menu.Append(self.ID_PB_STOP, self.tr("stop"))
+        playback_menu.AppendSeparator()
         playback_menu.Append(self.ID_PB_REWIND, self.tr("rew_5s"))
         playback_menu.Append(self.ID_PB_FORWARD, self.tr("fwd_5s"))
+        playback_menu.Append(self.ID_PB_BEGINNING, self.tr("play_beginning"))
         playback_menu.AppendSeparator()
         
         playback_menu.Append(self.ID_PB_NEXT, self.tr("next_item"))
@@ -935,7 +940,7 @@ class AsplayerWindow(wx.Frame):
         
         self.menu_resume_item = playback_menu.AppendCheckItem(
             self.ID_PB_TOGGLE_RESUME,
-            self.tr("resume_pos")
+            self.tr("resume_pos_toggle")
         )
         self.menu_resume_item.Check(self.config.get("resume_playback", True))
         
@@ -996,7 +1001,7 @@ class AsplayerWindow(wx.Frame):
         self.ID_PREFERENCES = wx.NewIdRef()
         tools_menu.Append(self.ID_PREFERENCES, self.tr("preferences"))
         
-        # Menu Help (Bantuan) - Tempat baru untuk About
+        # Menu Help (Bantuan)
         help_menu = wx.Menu()
         self.ID_ABOUT = wx.NewIdRef()
         help_menu.Append(self.ID_ABOUT, self.tr("about_menu"))
@@ -1021,6 +1026,7 @@ class AsplayerWindow(wx.Frame):
         
         self.Bind(wx.EVT_MENU, self.on_toggle_play, id=self.ID_PB_PLAYPAUSE)
         self.Bind(wx.EVT_MENU, self.on_stop, id=self.ID_PB_STOP)
+        self.Bind(wx.EVT_MENU, self.on_play_from_beginning, id=self.ID_PB_BEGINNING)
         self.Bind(wx.EVT_MENU, self.on_rewind, id=self.ID_PB_REWIND)
         self.Bind(wx.EVT_MENU, self.on_forward, id=self.ID_PB_FORWARD)
         
@@ -1062,6 +1068,7 @@ class AsplayerWindow(wx.Frame):
 
         accel_entries = [
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord(' '), self.ID_PB_PLAYPAUSE),
+            wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('w'), self.ID_PB_BEGINNING),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_RIGHT, self.ID_PB_FORWARD),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_LEFT, self.ID_PB_REWIND),
             wx.AcceleratorEntry(wx.ACCEL_CTRL, wx.WXK_LEFT, self.ID_JUMP_REW_30S),
@@ -1539,6 +1546,12 @@ class AsplayerWindow(wx.Frame):
         self.was_playing = False
         self.player.stop()
         self.speak(self.tr("stopped"))
+
+    def on_play_from_beginning(self, event):
+        if self.current_media_path:
+            self.player.set_time(0)
+            self.player.play()
+            # Sengaja dikosongkan (tanpa self.speak) agar NVDA tidak membunyikan apa pun saat tombol W ditekan
 
     def on_forward(self, event):
         new_time = self.player.get_time() + 5000

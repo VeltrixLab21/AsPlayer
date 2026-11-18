@@ -75,6 +75,7 @@ TRANSLATIONS = {
         "tts_test_btn": "&Test Voice",
         "tts_test_phrase": "This is a test of the ASPlayer subtitle voice settings.",
         "preferences": "Preferences...\tCtrl+Shift+P",
+        "menu_help": "&Help",
         "about_menu": "About ASPlayer...",
         "paused": "Paused",
         "playing": "Playing",
@@ -106,9 +107,10 @@ TRANSLATIONS = {
         "about_content": (
             "ASPlayer v1.0\n"
             "Professional Multimedia & Audio Player\n\n"
-            "A lightweight, fast, and feature-rich media player for Windows.\n"
-            "Supports high-performance video playback, universal audio formats,\n"
-            "precise subtitle synchronization, and robust playlist management."
+            "A lightweight, fast, and feature-rich media player for Windows, designed\n"
+            "with robust screen-reader accessibility and precise subtitle synchronization.\n\n"
+            "Developer : Agustinus Sunaryadi\n"
+            "Copyright © 2026 Agustinus Sunaryadi. All rights reserved."
         )
     },
     "id": {
@@ -173,6 +175,7 @@ TRANSLATIONS = {
         "tts_test_btn": "Uji Suara (&T)",
         "tts_test_phrase": "Ini adalah pengujian pengaturan suara subtitle ASPlayer.",
         "preferences": "Preferensi...\tCtrl+Shift+P",
+        "menu_help": "Bantuan (&H)",
         "about_menu": "Tentang ASPlayer...",
         "paused": "Dijeda",
         "playing": "Memutar",
@@ -204,9 +207,10 @@ TRANSLATIONS = {
         "about_content": (
             "ASPlayer v1.0\n"
             "Pemutar Multimedia & Audio Profesional\n\n"
-            "Pemutar media yang ringan, cepat, dan kaya fitur untuk Windows.\n"
-            "Mendukung pemutaran video berperforma tinggi, format audio universal,\n"
-            "sinkronisasi subtitle presisi, dan manajemen daftar putar yang andal."
+            "Pemutar media yang ringan, cepat, dan kaya fitur untuk Windows, dirancang\n"
+            "dengan aksesibilitas pembaca layar yang andal serta sinkronisasi subtitle presisi.\n\n"
+            "Pengembang : Agustinus Sunaryadi\n"
+            "Hak Cipta © 2026 Agustinus Sunaryadi. Hak cipta dilindungi undang-undang."
         )
     }
 }
@@ -309,7 +313,7 @@ class AboutDialog(wx.Dialog):
         title_str = TRANSLATIONS[current_lang]["about_title"]
         about_text = TRANSLATIONS[current_lang]["about_content"]
         
-        super().__init__(parent, title=title_str, size=(450, 280))
+        super().__init__(parent, title=title_str, size=(460, 300))
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -990,15 +994,18 @@ class AsplayerWindow(wx.Frame):
         tools_menu.AppendSeparator()
         
         self.ID_PREFERENCES = wx.NewIdRef()
-        self.ID_ABOUT = wx.NewIdRef()
         tools_menu.Append(self.ID_PREFERENCES, self.tr("preferences"))
-        tools_menu.AppendSeparator()
-        tools_menu.Append(self.ID_ABOUT, self.tr("about_menu"))
+        
+        # Menu Help (Bantuan) - Tempat baru untuk About
+        help_menu = wx.Menu()
+        self.ID_ABOUT = wx.NewIdRef()
+        help_menu.Append(self.ID_ABOUT, self.tr("about_menu"))
         
         menubar.Append(file_menu, self.tr("menu_file"))
         menubar.Append(view_menu, self.tr("menu_view"))
         menubar.Append(playback_menu, self.tr("menu_playback"))
         menubar.Append(tools_menu, self.tr("menu_tools"))
+        menubar.Append(help_menu, self.tr("menu_help"))
         self.SetMenuBar(menubar)
         
         # Event Bindings
@@ -1283,7 +1290,7 @@ class AsplayerWindow(wx.Frame):
         dlg.Destroy()
 
     def adjust_subtitle_sync(self, delta_ms):
-        apply_current_only = self.menu_apply_current_item.IsCheck()
+        apply_current_only = self.menu_apply_current_item.IsChecked()
         
         if apply_current_only and self.current_sub_index != -1:
             current_line_offset = self.per_line_offsets.get(self.current_sub_index, 0)
@@ -1328,7 +1335,6 @@ class AsplayerWindow(wx.Frame):
         vol = self.player.audio_get_volume()
         file_name = os.path.basename(self.current_media_path)
         
-        # Pengambilan ukuran video dengan presisi tinggi dari track asli video (index 0)
         width, height = 0, 0
         try:
             width, height = self.player.video_get_size(0)
@@ -1336,7 +1342,6 @@ class AsplayerWindow(wx.Frame):
             pass
         res_str = f"{width}x{height} pixels" if width > 0 and height > 0 else "Audio Only / Unknown"
         
-        # Pengambilan bitrate yang disempurnakan (menggunakan statistik VLC media atau ukuran file & durasi)
         bitrate_kbps = 0
         try:
             media_obj = self.player.get_media()
@@ -1352,7 +1357,6 @@ class AsplayerWindow(wx.Frame):
                 if os.path.exists(self.current_media_path) and total_ms > 0:
                     file_size_bytes = os.path.getsize(self.current_media_path)
                     duration_sec = total_ms / 1000.0
-                    # Menggunakan perhitungan presisi byte ke kilobit per detik (kbps)
                     bitrate_kbps = int((file_size_bytes * 8) / (duration_sec * 1000))
             except Exception:
                 pass

@@ -1,5 +1,7 @@
 import os
+import sys
 import json
+import random
 import threading
 import wx
 import vlc
@@ -77,6 +79,8 @@ TRANSLATIONS = {
         "tts_test_phrase": "This is a test of the ASPlayer subtitle voice settings.",
         "preferences": "Preferences...\tCtrl+Shift+P",
         "menu_help": "&Help",
+        "shortcuts_menu": "Keyboard Shortcuts...",
+        "shortcuts_title": "Keyboard Shortcuts - ASPlayer",
         "about_menu": "About ASPlayer...",
         "paused": "Paused",
         "playing": "Playing",
@@ -98,13 +102,69 @@ TRANSLATIONS = {
         "cancel": "Cancel",
         "close": "Close",
         "playlist_title": "Playlist Manager - ASPlayer",
-        "playlist_lbl": "Playlist Items (Press Enter to play, Alt+Up/Down to reorder):",
+        "playlist_lbl": "Playlist (Enter/Alt+P=Play, Alt+A=Add, Alt+R/Del=Remove, C=Clear All, S=Shuffle, R=Repeat, Alt+Up/Down=Reorder):",
         "playlist_add": "&Add Files...",
-        "playlist_remove": "&Remove Selected",
-        "playlist_move_up": "Move &Up (Alt+Up)",
-        "playlist_move_down": "Move &Down (Alt+Down)",
-        "playlist_clear": "&Clear All",
-        "playlist_play": "&Play Selected (Alt+P)",
+        "playlist_play": "&Play Selected",
+        "playlist_remove": "Remove Selected (Alt+R)",
+        "playlist_more": "&More Options...",
+        "more_move_up": "Move Up\tAlt+Up",
+        "more_move_down": "Move Down\tAlt+Down",
+        "more_shuffle": "Shuffle Playlist\tS",
+        "more_repeat": "Cycle Repeat Mode\tR",
+        "more_clear": "Clear All Items\tC",
+        "shortcuts_content": (
+            "ASPLAYER KEYBOARD SHORTCUTS\n"
+            "==========================\n\n"
+            "[File]\n"
+            "Ctrl+O          : Open Media File(s)\n"
+            "Ctrl+Shift+O    : Open Folder\n"
+            "Alt+O           : Open Subtitle (.srt)\n"
+            "Ctrl+L          : Open Playlist Manager\n"
+            "Ctrl+I          : Media Information\n"
+            "Alt+F4          : Exit ASPlayer\n\n"
+            "[View]\n"
+            "F11             : Fullscreen (Keep Aspect Ratio)\n"
+            "Ctrl+Enter      : Fullscreen (Stretch)\n\n"
+            "[Playback]\n"
+            "Space           : Play / Pause\n"
+            "Ctrl+S          : Stop\n"
+            "Left            : Rewind 5 Seconds\n"
+            "Right           : Fast Forward 5 Seconds\n"
+            "W               : Play from Beginning\n"
+            "Page Down       : Play Next Item\n"
+            "Page Up         : Play Previous Item\n"
+            "R               : Cycle Repeat Mode (Off / All / One)\n\n"
+            "[Jump To]\n"
+            "Ctrl+Left       : Jump Backward 30 Seconds\n"
+            "Ctrl+Right      : Jump Forward 30 Seconds\n"
+            "Shift+Left      : Jump Backward 1 Minute\n"
+            "Shift+Right     : Jump Forward 1 Minute\n"
+            "Ctrl+Page Up    : Jump Backward 5 Minutes\n"
+            "Ctrl+Page Down  : Jump Forward 5 Minutes\n\n"
+            "[Volume]\n"
+            "Up              : Volume Up (+5%)\n"
+            "Down            : Volume Down (-5%)\n"
+            "M               : Mute / Unmute\n\n"
+            "[Subtitle Sync]\n"
+            ">               : Accelerate subtitle 0.5 second\n"
+            "<               : Delay subtitle 0.5 second\n"
+            "Ctrl+>          : Accelerate subtitle 5 seconds\n"
+            "Ctrl+<          : Delay subtitle 5 seconds\n"
+            "Shift+>         : Accelerate subtitle 50 seconds\n"
+            "Shift+<         : Delay subtitle 50 seconds\n\n"
+            "[Playlist Manager]\n"
+            "Enter / Alt+P   : Play Selected Item\n"
+            "Alt+A           : Add Files\n"
+            "Alt+R / Delete  : Remove Selected Item\n"
+            "Alt+Up          : Move Item Up\n"
+            "Alt+Down        : Move Item Down\n"
+            "S               : Shuffle Playlist\n"
+            "R               : Cycle Repeat Mode\n"
+            "C               : Clear All Items\n\n"
+            "[General]\n"
+            "Ctrl+Shift+P    : Preferences\n"
+            "Escape          : Close Dialog"
+        ),
         "about_content": (
             "ASPlayer v1.0\n"
             "Professional Multimedia & Audio Player\n\n"
@@ -178,6 +238,8 @@ TRANSLATIONS = {
         "tts_test_phrase": "Ini adalah pengujian pengaturan suara subtitle ASPlayer.",
         "preferences": "Preferensi...\tCtrl+Shift+P",
         "menu_help": "Bantuan (&H)",
+        "shortcuts_menu": "Pintasan Keyboard...",
+        "shortcuts_title": "Pintasan Keyboard - ASPlayer",
         "about_menu": "Tentang ASPlayer...",
         "paused": "Dijeda",
         "playing": "Memutar",
@@ -199,13 +261,69 @@ TRANSLATIONS = {
         "cancel": "Batal",
         "close": "Tutup",
         "playlist_title": "Pengelola Daftar Putar - ASPlayer",
-        "playlist_lbl": "Item Daftar Putar (Tekan Enter untuk memutar, Alt+Atas/Bawah untuk ubah urutan):",
+        "playlist_lbl": "Daftar Putar (Enter/Alt+P=Putar, Alt+A=Tambah, Alt+R/Del=Hapus, C=Bersihkan Semua, S=Acak, R=Ulangi, Alt+Atas/Bawah=Atur Urutan):",
         "playlist_add": "Tambah Berkas (&A)...",
-        "playlist_remove": "Hapus Terpilih (&R)",
-        "playlist_move_up": "Geser Naik (&U) (Alt+Atas)",
-        "playlist_move_down": "Geser Turun (&D) (Alt+Bawah)",
-        "playlist_clear": "Bersihkan Semua (&C)",
         "playlist_play": "Putar Terpilih (&P)",
+        "playlist_remove": "Hapus Terpilih (Alt+R)",
+        "playlist_more": "Opsi Lainnya (&M)...",
+        "more_move_up": "Pindahkan ke Atas\tAlt+Up",
+        "more_move_down": "Pindahkan ke Bawah\tAlt+Down",
+        "more_shuffle": "Acak Daftar Putar\tS",
+        "more_repeat": "Ubah Mode Ulangi\tR",
+        "more_clear": "Bersihkan Semua Item\tC",
+        "shortcuts_content": (
+            "DAFTAR PINTASAN KEYBOARD ASPLAYER\n"
+            "=================================\n\n"
+            "[Berkas]\n"
+            "Ctrl+O          : Buka Berkas Media\n"
+            "Ctrl+Shift+O    : Buka Folder\n"
+            "Alt+O           : Buka Subtitle (.srt)\n"
+            "Ctrl+L          : Buka Pengelola Daftar Putar\n"
+            "Ctrl+I          : Informasi Media\n"
+            "Alt+F4          : Keluar dari ASPlayer\n\n"
+            "[Tampilan]\n"
+            "F11             : Layar Penuh (Rasio Asli)\n"
+            "Ctrl+Enter      : Layar Penuh (Penuh)\n\n"
+            "[Pemutaran]\n"
+            "Space           : Putar / Jeda\n"
+            "Ctrl+S          : Berhenti\n"
+            "Left            : Mundur 5 Detik\n"
+            "Right           : Maju 5 Detik\n"
+            "W               : Putar dari Awal\n"
+            "Page Down       : Item Berikutnya\n"
+            "Page Up         : Item Sebelumnya\n"
+            "R               : Ubah Mode Ulangi (Mati / Semua / Satu)\n\n"
+            "[Lompat Ke]\n"
+            "Ctrl+Left       : Mundur 30 Detik\n"
+            "Ctrl+Right      : Maju 30 Detik\n"
+            "Shift+Left      : Mundur 1 Menit\n"
+            "Shift+Right     : Maju 1 Menit\n"
+            "Ctrl+Page Up    : Mundur 5 Menit\n"
+            "Ctrl+Page Down  : Maju 5 Menit\n\n"
+            "[Volume]\n"
+            "Up              : Naikkan Volume (+5%)\n"
+            "Down            : Turunkan Volume (-5%)\n"
+            "M               : Bisukan / Bunyikan\n\n"
+            "[Sinkronisasi Subtitle]\n"
+            ">               : Percepat subtitle 0,5 detik\n"
+            "<               : Mundurkan subtitle 0,5 detik\n"
+            "Ctrl+>          : Percepat subtitle 5 detik\n"
+            "Ctrl+<          : Mundurkan subtitle 5 detik\n"
+            "Shift+>         : Percepat subtitle 50 detik\n"
+            "Shift+<         : Mundurkan subtitle 50 detik\n\n"
+            "[Pengelola Daftar Putar]\n"
+            "Enter / Alt+P   : Putar Item Terpilih\n"
+            "Alt+A           : Tambah Berkas\n"
+            "Alt+R / Delete  : Hapus Item Terpilih\n"
+            "Alt+Up          : Pindahkan Item ke Atas\n"
+            "Alt+Down        : Pindahkan Item ke Bawah\n"
+            "S               : Acak Daftar Putar\n"
+            "R               : Ubah Mode Ulangi\n"
+            "C               : Bersihkan Semua Item\n\n"
+            "[Umum]\n"
+            "Ctrl+Shift+P    : Preferensi\n"
+            "Escape          : Tutup Dialog"
+        ),
         "about_content": (
             "ASPlayer v1.0\n"
             "Pemutar Multimedia & Audio Profesional\n\n"
@@ -306,8 +424,46 @@ class MediaInfoDialog(wx.Dialog):
         sizer.Add(btn_close, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 12)
 
         panel.SetSizer(sizer)
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.txt_info.SetFocus()
         self.CenterOnParent()
+
+    def on_char_hook(self, event):
+        if event.GetKeyCode() == wx.WXK_ESCAPE:
+            self.EndModal(wx.ID_CANCEL)
+        else:
+            event.Skip()
+
+
+class KeyboardShortcutsDialog(wx.Dialog):
+    def __init__(self, parent, current_lang="en"):
+        tr = TRANSLATIONS.get(current_lang, TRANSLATIONS["en"])
+        super().__init__(parent, title=tr["shortcuts_title"], size=(540, 440))
+        panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.txt_shortcuts = wx.TextCtrl(
+            panel,
+            value=tr["shortcuts_content"],
+            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2
+        )
+        self.txt_shortcuts.SetName("Keyboard Shortcuts List")
+        sizer.Add(self.txt_shortcuts, 1, wx.EXPAND | wx.ALL, 12)
+
+        btn_close = wx.Button(panel, wx.ID_CLOSE, tr["close"])
+        btn_close.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_CLOSE))
+        sizer.Add(btn_close, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 12)
+
+        panel.SetSizer(sizer)
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
+        self.txt_shortcuts.SetFocus()
+        self.CenterOnParent()
+
+    def on_char_hook(self, event):
+        if event.GetKeyCode() == wx.WXK_ESCAPE:
+            self.EndModal(wx.ID_CLOSE)
+        else:
+            event.Skip()
 
 
 class AboutDialog(wx.Dialog):
@@ -557,54 +713,62 @@ class PlaylistDialog(wx.Dialog):
     def __init__(self, parent, playlist, current_index, current_lang="en"):
         self.current_lang = current_lang
         tr = TRANSLATIONS[current_lang]
-        super().__init__(parent, title=tr["playlist_title"], size=(600, 450))
+        super().__init__(parent, title=tr["playlist_title"], size=(640, 480))
         self.parent_frame = parent
         self.playlist = list(playlist)
         self.current_index = current_index
-        
+
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        
+
         lbl = wx.StaticText(panel, label=tr["playlist_lbl"])
         sizer.Add(lbl, 0, wx.ALL, 10)
-        
+
         self.listbox = wx.ListBox(panel, style=wx.LB_SINGLE)
         self.listbox.SetName("Playlist Items Listbox")
         self.refresh_list()
         sizer.Add(self.listbox, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
-        
+
         btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.btn_add = wx.Button(panel, label=tr["playlist_add"])
-        self.btn_remove = wx.Button(panel, label=tr["playlist_remove"])
-        self.btn_move_up = wx.Button(panel, label=tr["playlist_move_up"])
-        self.btn_move_down = wx.Button(panel, label=tr["playlist_move_down"])
-        self.btn_clear = wx.Button(panel, label=tr["playlist_clear"])
         self.btn_play = wx.Button(panel, label=tr["playlist_play"])
+        self.btn_remove = wx.Button(panel, label=tr["playlist_remove"])
+        self.btn_more = wx.Button(panel, label=tr["playlist_more"])
         self.btn_close = wx.Button(panel, wx.ID_CANCEL, tr["close"])
-        
+
         btn_sizer.Add(self.btn_add, 0, wx.RIGHT, 5)
-        btn_sizer.Add(self.btn_remove, 0, wx.RIGHT, 5)
-        btn_sizer.Add(self.btn_move_up, 0, wx.RIGHT, 5)
-        btn_sizer.Add(self.btn_move_down, 0, wx.RIGHT, 5)
-        btn_sizer.Add(self.btn_clear, 0, wx.RIGHT, 5)
         btn_sizer.Add(self.btn_play, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_remove, 0, wx.RIGHT, 5)
+        btn_sizer.Add(self.btn_more, 0, wx.RIGHT, 5)
+        btn_sizer.AddStretchSpacer()
         btn_sizer.Add(self.btn_close, 0)
-        
+
         sizer.Add(btn_sizer, 0, wx.ALL | wx.ALIGN_CENTER, 10)
         panel.SetSizer(sizer)
-        
+
+        self.ID_CLEAR_ALL_ACCEL = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_clear_all, id=self.ID_CLEAR_ALL_ACCEL)
+        self.SetAcceleratorTable(wx.AcceleratorTable([
+            wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('c'), self.ID_CLEAR_ALL_ACCEL),
+            wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('C'), self.ID_CLEAR_ALL_ACCEL),
+        ]))
+
         self.btn_add.Bind(wx.EVT_BUTTON, self.on_add_files)
-        self.btn_remove.Bind(wx.EVT_BUTTON, self.on_remove_item)
-        self.btn_move_up.Bind(wx.EVT_BUTTON, lambda e: self.move_item(-1))
-        self.btn_move_down.Bind(wx.EVT_BUTTON, lambda e: self.move_item(1))
-        self.btn_clear.Bind(wx.EVT_BUTTON, self.on_clear_all)
         self.btn_play.Bind(wx.EVT_BUTTON, self.on_play_selected)
-        
+        self.btn_remove.Bind(wx.EVT_BUTTON, self.on_remove_item)
+        self.btn_more.Bind(wx.EVT_BUTTON, self.on_show_more_options)
+
         self.listbox.Bind(wx.EVT_LISTBOX_DCLICK, self.on_play_selected)
         self.listbox.Bind(wx.EVT_KEY_DOWN, self.on_list_key)
-        
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_dialog_char_hook)
+
         self.listbox.SetFocus()
         self.CenterOnParent()
+
+    def _sync_playlist_to_parent(self):
+        self.parent_frame.playlist = list(self.playlist)
+        self.parent_frame.playlist_index = self.current_index
+        self.parent_frame.save_playlist_state()
 
     def refresh_list(self, select_idx=None):
         self.listbox.Clear()
@@ -612,7 +776,7 @@ class PlaylistDialog(wx.Dialog):
             name = os.path.basename(item)
             prefix = "[Playing] " if idx == self.current_index else ""
             self.listbox.Append(f"{idx + 1}. {prefix}{name}")
-            
+
         if select_idx is not None and 0 <= select_idx < len(self.playlist):
             self.listbox.SetSelection(select_idx)
         elif 0 <= self.current_index < len(self.playlist):
@@ -624,22 +788,20 @@ class PlaylistDialog(wx.Dialog):
         sel = self.listbox.GetSelection()
         if sel == wx.NOT_FOUND:
             return
-            
+
         new_sel = sel + direction
         if 0 <= new_sel < len(self.playlist):
             item = self.playlist.pop(sel)
             self.playlist.insert(new_sel, item)
-            
+
             if self.current_index == sel:
                 self.current_index = new_sel
             elif self.current_index == new_sel:
                 self.current_index = sel
-                
-            self.parent_frame.playlist = list(self.playlist)
-            self.parent_frame.playlist_index = self.current_index
-            
+
+            self._sync_playlist_to_parent()
             self.refresh_list(select_idx=new_sel)
-            
+
             file_name = os.path.basename(item)
             announcement = f"Moved {file_name} to position {new_sel + 1} of {len(self.playlist)}"
             self.parent_frame.speak(announcement)
@@ -650,7 +812,7 @@ class PlaylistDialog(wx.Dialog):
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
             self.playlist.extend(paths)
-            self.parent_frame.playlist = list(self.playlist)
+            self._sync_playlist_to_parent()
             self.refresh_list()
             self.parent_frame.speak(f"Added {len(paths)} items to playlist")
         dlg.Destroy()
@@ -664,18 +826,55 @@ class PlaylistDialog(wx.Dialog):
                 self.current_index -= 1
             elif sel == self.current_index:
                 self.current_index = -1
-            self.parent_frame.playlist = list(self.playlist)
-            self.parent_frame.playlist_index = self.current_index
+            self._sync_playlist_to_parent()
             self.refresh_list()
             self.parent_frame.speak(f"Removed {removed_name}")
 
-    def on_clear_all(self, event):
+    def on_clear_all(self, event=None):
         self.playlist.clear()
         self.current_index = -1
-        self.parent_frame.playlist = []
-        self.parent_frame.playlist_index = -1
+        self._sync_playlist_to_parent()
         self.refresh_list()
         self.parent_frame.speak("Playlist cleared")
+
+    def on_shuffle_action(self, event=None):
+        if len(self.playlist) > 1:
+            current_item = self.playlist[self.current_index] if 0 <= self.current_index < len(self.playlist) else None
+            random.shuffle(self.playlist)
+            if current_item in self.playlist:
+                self.current_index = self.playlist.index(current_item)
+            self._sync_playlist_to_parent()
+            self.refresh_list()
+            self.parent_frame.speak("Playlist shuffled")
+
+    def on_cycle_repeat_action(self, event=None):
+        self.parent_frame.on_cycle_repeat_action(event)
+
+    def on_show_more_options(self, event):
+        tr = TRANSLATIONS.get(self.parent_frame.config.get("language", self.current_lang), TRANSLATIONS["en"])
+        menu = wx.Menu()
+        id_move_up = wx.NewIdRef()
+        id_move_down = wx.NewIdRef()
+        id_shuffle = wx.NewIdRef()
+        id_repeat = wx.NewIdRef()
+        id_clear = wx.NewIdRef()
+
+        menu.Append(id_move_up, tr["more_move_up"])
+        menu.Append(id_move_down, tr["more_move_down"])
+        menu.AppendSeparator()
+        menu.Append(id_shuffle, tr["more_shuffle"])
+        menu.Append(id_repeat, tr["more_repeat"])
+        menu.AppendSeparator()
+        menu.Append(id_clear, tr["more_clear"])
+
+        menu.Bind(wx.EVT_MENU, lambda e: self.move_item(-1), id=id_move_up)
+        menu.Bind(wx.EVT_MENU, lambda e: self.move_item(1), id=id_move_down)
+        menu.Bind(wx.EVT_MENU, self.on_shuffle_action, id=id_shuffle)
+        menu.Bind(wx.EVT_MENU, self.on_cycle_repeat_action, id=id_repeat)
+        menu.Bind(wx.EVT_MENU, self.on_clear_all, id=id_clear)
+
+        self.PopupMenu(menu, self.btn_more.GetPosition())
+        menu.Destroy()
 
     def on_play_selected(self, event):
         sel = self.listbox.GetSelection()
@@ -684,18 +883,46 @@ class PlaylistDialog(wx.Dialog):
             self.parent_frame.play_playlist_index(sel)
             self.EndModal(wx.ID_OK)
 
+    def _handle_shortcut_key(self, event):
+        key = event.GetKeyCode()
+        alt_down = event.AltDown()
+        ctrl_down = event.ControlDown()
+
+        if alt_down and key in (ord('r'), ord('R')):
+            self.on_remove_item(None)
+            return True
+        if not alt_down and not ctrl_down:
+            if key == wx.WXK_DELETE:
+                self.on_remove_item(None)
+                return True
+            if key in (ord('c'), ord('C')):
+                self.on_clear_all()
+                return True
+            if key in (ord('s'), ord('S')):
+                self.on_shuffle_action()
+                return True
+            if key in (ord('r'), ord('R')):
+                self.on_cycle_repeat_action()
+                return True
+        return False
+
+    def on_dialog_char_hook(self, event):
+        if self._handle_shortcut_key(event):
+            return
+        event.Skip()
+
     def on_list_key(self, event):
         key = event.GetKeyCode()
         alt_down = event.AltDown()
-        
-        if key == wx.WXK_RETURN:
+
+        if key == wx.WXK_RETURN and not alt_down:
             self.on_play_selected(None)
-        elif key == wx.WXK_DELETE:
-            self.on_remove_item(None)
         elif key == wx.WXK_UP and alt_down:
             self.move_item(-1)
         elif key == wx.WXK_DOWN and alt_down:
             self.move_item(1)
+        elif self._handle_shortcut_key(event):
+            pass
         else:
             event.Skip()
 
@@ -732,6 +959,8 @@ class AsplayerWindow(wx.Frame):
         self.pending_seek_time = 0
         self.was_playing = False
         
+        self.repeat_mode = 0
+        
         self.sub_offset_ms = 0
         self.sub_enabled = True
         self.sub_position = 0
@@ -744,6 +973,7 @@ class AsplayerWindow(wx.Frame):
         
         self.init_ui()
         self.apply_theme()
+        self.load_saved_playlist()
         self.init_timer()
         self.Bind(wx.EVT_CLOSE, self.on_window_close)
         self.Center()
@@ -758,6 +988,8 @@ class AsplayerWindow(wx.Frame):
             "resume_playback": True,
             "language": "en",
             "theme": "dark",
+            "playlist": [],
+            "playlist_index": -1,
             "positions": {},
             "subtitles": {},
             "accessibility": {
@@ -787,6 +1019,36 @@ class AsplayerWindow(wx.Frame):
             os.replace(temp_file, self.config_file)
         except Exception as e:
             print(f"Gagal menyimpan konfigurasi: {e}")
+
+    def save_playlist_state(self):
+        self.config["playlist"] = list(self.playlist)
+        self.config["playlist_index"] = self.playlist_index if 0 <= self.playlist_index < len(self.playlist) else -1
+        self.save_config()
+
+    def load_saved_playlist(self):
+        saved_items = self.config.get("playlist", [])
+        if not isinstance(saved_items, list) or not saved_items:
+            self.playlist = []
+            self.playlist_index = -1
+            return
+
+        valid_items = [p for p in saved_items if isinstance(p, str) and os.path.exists(p)]
+        self.playlist = valid_items
+
+        saved_idx = self.config.get("playlist_index", -1)
+        if not valid_items:
+            self.playlist_index = -1
+        elif isinstance(saved_idx, int) and 0 <= saved_idx < len(saved_items):
+            target_path = saved_items[saved_idx]
+            if target_path in valid_items:
+                self.playlist_index = valid_items.index(target_path)
+            else:
+                self.playlist_index = 0
+        else:
+            self.playlist_index = 0
+
+        if len(valid_items) != len(saved_items) or saved_idx != self.playlist_index:
+            self.save_playlist_state()
 
     def apply_theme(self):
         theme = self.config.get("theme", "dark")
@@ -856,7 +1118,6 @@ class AsplayerWindow(wx.Frame):
         
         menubar = wx.MenuBar()
         
-        # Menu File
         file_menu = wx.Menu()
         open_submenu = wx.Menu()
         
@@ -878,7 +1139,6 @@ class AsplayerWindow(wx.Frame):
         file_menu.AppendSeparator()
         file_menu.Append(self.ID_EXIT, self.tr("exit"))
         
-        # Menu View
         view_menu = wx.Menu()
         self.ID_FS_KEEP_AR = wx.NewIdRef()
         self.ID_FS_STRETCH = wx.NewIdRef()
@@ -886,7 +1146,6 @@ class AsplayerWindow(wx.Frame):
         view_menu.Append(self.ID_FS_KEEP_AR, self.tr("fs_keep_ar"))
         view_menu.Append(self.ID_FS_STRETCH, self.tr("fs_stretch"))
         
-        # Menu Playback
         playback_menu = wx.Menu()
         self.ID_PB_PLAYPAUSE = wx.NewIdRef()
         self.ID_PB_STOP = wx.NewIdRef()
@@ -896,6 +1155,7 @@ class AsplayerWindow(wx.Frame):
         self.ID_PB_NEXT = wx.NewIdRef()
         self.ID_PB_PREV = wx.NewIdRef()
         self.ID_PB_TOGGLE_RESUME = wx.NewIdRef()
+        self.ID_PB_REPEAT_CYCLE = wx.NewIdRef()
         
         playback_menu.Append(self.ID_PB_PLAYPAUSE, self.tr("play_pause"))
         playback_menu.Append(self.ID_PB_STOP, self.tr("stop"))
@@ -944,7 +1204,6 @@ class AsplayerWindow(wx.Frame):
         )
         self.menu_resume_item.Check(self.config.get("resume_playback", True))
         
-        # Menu Tools
         tools_menu = wx.Menu()
         
         sub_settings_menu = wx.Menu()
@@ -1001,9 +1260,11 @@ class AsplayerWindow(wx.Frame):
         self.ID_PREFERENCES = wx.NewIdRef()
         tools_menu.Append(self.ID_PREFERENCES, self.tr("preferences"))
         
-        # Menu Help (Bantuan)
         help_menu = wx.Menu()
+        self.ID_SHORTCUTS = wx.NewIdRef()
         self.ID_ABOUT = wx.NewIdRef()
+        help_menu.Append(self.ID_SHORTCUTS, self.tr("shortcuts_menu"))
+        help_menu.AppendSeparator()
         help_menu.Append(self.ID_ABOUT, self.tr("about_menu"))
         
         menubar.Append(file_menu, self.tr("menu_file"))
@@ -1013,7 +1274,6 @@ class AsplayerWindow(wx.Frame):
         menubar.Append(help_menu, self.tr("menu_help"))
         self.SetMenuBar(menubar)
         
-        # Event Bindings
         self.Bind(wx.EVT_MENU, self.on_open_media_dialog, id=self.ID_OPEN_MEDIA)
         self.Bind(wx.EVT_MENU, self.on_open_folder_dialog, id=self.ID_OPEN_FOLDER)
         self.Bind(wx.EVT_MENU, self.on_open_sub_dialog, id=self.ID_OPEN_SUB)
@@ -1029,6 +1289,7 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_play_from_beginning, id=self.ID_PB_BEGINNING)
         self.Bind(wx.EVT_MENU, self.on_rewind, id=self.ID_PB_REWIND)
         self.Bind(wx.EVT_MENU, self.on_forward, id=self.ID_PB_FORWARD)
+        self.Bind(wx.EVT_MENU, self.on_cycle_repeat_action, id=self.ID_PB_REPEAT_CYCLE)
         
         self.Bind(wx.EVT_MENU, lambda e: self.jump_time(-30000, "Jumped backward 30 seconds"), id=self.ID_JUMP_REW_30S)
         self.Bind(wx.EVT_MENU, lambda e: self.jump_time(30000, "Jumped forward 30 seconds"), id=self.ID_JUMP_FWD_30S)
@@ -1061,6 +1322,7 @@ class AsplayerWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_prev_item, id=self.ID_PB_PREV)
         self.Bind(wx.EVT_MENU, self.on_toggle_resume_mode, id=self.ID_PB_TOGGLE_RESUME)
         self.Bind(wx.EVT_MENU, self.on_preferences, id=self.ID_PREFERENCES)
+        self.Bind(wx.EVT_MENU, self.on_shortcuts, id=self.ID_SHORTCUTS)
         self.Bind(wx.EVT_MENU, self.on_about, id=self.ID_ABOUT)
         
         self.Bind(wx.EVT_CONTEXT_MENU, self.on_show_context_menu)
@@ -1069,6 +1331,7 @@ class AsplayerWindow(wx.Frame):
         accel_entries = [
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord(' '), self.ID_PB_PLAYPAUSE),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('w'), self.ID_PB_BEGINNING),
+            wx.AcceleratorEntry(wx.ACCEL_NORMAL, ord('r'), self.ID_PB_REPEAT_CYCLE),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_RIGHT, self.ID_PB_FORWARD),
             wx.AcceleratorEntry(wx.ACCEL_NORMAL, wx.WXK_LEFT, self.ID_PB_REWIND),
             wx.AcceleratorEntry(wx.ACCEL_CTRL, wx.WXK_LEFT, self.ID_JUMP_REW_30S),
@@ -1091,6 +1354,12 @@ class AsplayerWindow(wx.Frame):
             wx.AcceleratorEntry(wx.ACCEL_CTRL, wx.WXK_RETURN, self.ID_FS_STRETCH),
         ]
         self.SetAcceleratorTable(wx.AcceleratorTable(accel_entries))
+
+    def on_cycle_repeat_action(self, event=None):
+        self.repeat_mode = (self.repeat_mode + 1) % 3
+        mode_names = ["Repeat Off", "Repeat All", "Repeat One"]
+        current_name = mode_names[self.repeat_mode]
+        self.speak(f"Repeat mode: {current_name}")
 
     def on_prevent_vlc_key_leak(self, event):
         if self.FindFocus() == self.video_panel:
@@ -1179,6 +1448,7 @@ class AsplayerWindow(wx.Frame):
     def play_playlist_index(self, index):
         if 0 <= index < len(self.playlist):
             self.playlist_index = index
+            self.save_playlist_state()
             path = self.playlist[index]
             self.load_media(path)
 
@@ -1431,6 +1701,12 @@ class AsplayerWindow(wx.Frame):
             self.speak(self.tr("prefs_saved"))
         dlg.Destroy()
 
+    def on_shortcuts(self, event):
+        current_lang = self.config.get("language", "en")
+        dlg = KeyboardShortcutsDialog(self, current_lang=current_lang)
+        dlg.ShowModal()
+        dlg.Destroy()
+
     def on_about(self, event):
         current_lang = self.config.get("language", "en")
         dlg = AboutDialog(self, current_lang=current_lang)
@@ -1442,6 +1718,7 @@ class AsplayerWindow(wx.Frame):
 
     def on_window_close(self, event):
         self.record_current_position()
+        self.save_playlist_state()
         self.timer.Stop()
         self.player.stop()
         event.Skip()
@@ -1507,8 +1784,13 @@ class AsplayerWindow(wx.Frame):
                 self.pending_seek_time = 0
         elif state == vlc.State.Ended and self.was_playing:
             self.was_playing = False
-            if self.playlist_index + 1 < len(self.playlist):
+            if self.repeat_mode == 2:
+                self.play_playlist_index(self.playlist_index)
+            elif self.playlist_index + 1 < len(self.playlist):
                 self.play_playlist_index(self.playlist_index + 1)
+            elif self.repeat_mode == 1:
+                if len(self.playlist) > 0:
+                    self.play_playlist_index(0)
             else:
                 self.speak("End of playlist")
             return
@@ -1551,7 +1833,6 @@ class AsplayerWindow(wx.Frame):
         if self.current_media_path:
             self.player.set_time(0)
             self.player.play()
-            # Sengaja dikosongkan (tanpa self.speak) agar NVDA tidak membunyikan apa pun saat tombol W ditekan
 
     def on_forward(self, event):
         new_time = self.player.get_time() + 5000
@@ -1578,12 +1859,16 @@ class AsplayerWindow(wx.Frame):
     def on_next_item(self, event):
         if self.playlist_index + 1 < len(self.playlist):
             self.play_playlist_index(self.playlist_index + 1)
+        elif self.repeat_mode == 1 and len(self.playlist) > 0:
+            self.play_playlist_index(0)
         else:
             self.speak("No next item in playlist")
 
     def on_prev_item(self, event):
         if self.playlist_index - 1 >= 0:
             self.play_playlist_index(self.playlist_index - 1)
+        elif self.repeat_mode == 1 and len(self.playlist) > 0:
+            self.play_playlist_index(len(self.playlist) - 1)
         else:
             self.speak("No previous item in playlist")
 
@@ -1604,13 +1889,21 @@ class AsplayerWindow(wx.Frame):
         
         if new_mute_state:
             self.speak("Muted")
-        else:
-            vol = self.player.audio_get_volume()
-            self.speak(f"Unmuted. Volume {vol} percent")
 
 
 if __name__ == '__main__':
     app = wx.App()
     frame = AsplayerWindow()
     frame.Show()
+
+    media_arg = None
+    for arg in sys.argv[1:]:
+        clean_arg = arg.strip('"')
+        if os.path.isfile(clean_arg) and clean_arg.lower().endswith(MEDIA_EXTENSIONS):
+            media_arg = clean_arg
+            break
+
+    if media_arg:
+        wx.CallAfter(frame.load_media, media_arg)
+
     app.MainLoop()
